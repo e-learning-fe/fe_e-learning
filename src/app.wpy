@@ -1,0 +1,77 @@
+<template>
+
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class extends wepy.app {
+    config = {
+      pages: [
+        'pages/index/index',
+        'pages/classinfo/classinfo'
+      ],
+      window: {
+        backgroundTextStyle: 'light',
+        navigationBarBackgroundColor: '#0099ff',
+        navigationBarTitleText: '网上学习平台',
+        navigationBarTextStyle: 'white',
+        enablePullDownRefresh: true
+      },
+      tabBar: {
+        color: '#7f848a',
+        selectedColor: '#0099ff',
+        backgroundColor: '#f7f6fb',
+        list: [
+          {
+            pagePath: 'pages/index/index',
+            text: '首页',
+            iconPath: 'images/index/index.png',
+            selectedIconPath: 'images/index/index@active.png'
+          },
+          {
+            pagePath: 'pages/classinfo/classinfo',
+            text: '班级',
+            iconPath: 'images/index/classinfo.png',
+            selectedIconPath: 'images/index/classinfo@active.png'
+          },
+          {
+            pagePath: 'pages/more/more',
+            text: '更多',
+            iconPath: 'images/index/more.png',
+            selectedIconPath: 'images/index/more@active.png'
+          }
+        ]
+      },
+      networkTimeout: {
+        request: 20000,
+        uploadFile: 30000,
+        downloadFile: 30000
+      }
+    };
+    // app.js
+    onLaunch() {
+      console.log(this)
+    }
+  }
+</script>
+
+<style lang="less">
+  page {
+    font-family: -apple-system-font, Helvetica Neue, Helvetica, sans-serif;
+    font-size: 10pt;
+    line-height: 150%;
+    color: #666;
+    min-height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box; // align-items: center;
+    justify-content: space-between;
+  }
+</style>
