@@ -1,4 +1,5 @@
 <template>
+<!-- test -->
   <view class="container">
     <!-- 顶部 -->
     <view class="main-core">
