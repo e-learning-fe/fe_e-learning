@@ -2,3 +2,10 @@ node_modules
 dist
 .DB_store
 *.wpy___jb_tmp___
+<<<<<<< HEAD
+=======
+node_modules
+dist
+.DB_store
+*.wpy___jb_tmp___
+>>>>>>> dff5c4153eaf605b349ab37533ee3ac1213fee16

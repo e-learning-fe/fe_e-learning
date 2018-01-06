@@ -1,13 +1,16 @@
 <template>
-  <view>Hello World!</view>
+  <view class="container">
+    
+  </view>
 </template>
 
 <script>
-  export default {
+  import wepy from 'wepy'
+  export default class extends wepy.page{
     
   }
 </script>
 
 <style lang="less">
-
+ 
 </style>

@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "name": "gk_e-learning",
+=======
+  "name": "netlearning",
+>>>>>>> dff5c4153eaf605b349ab37533ee3ac1213fee16
   "version": "1.2.8",
   "description": "",
   "main": "dist/app.js",
