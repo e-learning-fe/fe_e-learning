@@ -1,31 +1,76 @@
 <template>
   <view class="container">
     <view class="title-teacher">教师信息</view>
-    <view class="userInfo-wrap">
-      <view class="userInfo-icon-wrap">
-        <view class="userInfo-icon"></view>
-      </view>
-      <view class="userInfo-info-wrap">
-        <view class="userInfo-info">
-          <view class="userInfo-info-name">姓名</view>
-          <view class="userInfo-info-detail">：游琪</view>
-        </view>
-        <view class="userInfo-info">
-          <view class="userInfo-info-name">教授课程</view>
-          <view class="userInfo-info-detail">：网页设计与制作</view>
-        </view>
-      </view>
-    </view>
+    <!-- 判断传递过来的用户类型，如果types为"teacher"则使用轮播图样式，
+              否则使用竖式列表样式 -->
     <!-- 轮播图 -->
-    <swiper indicator-dots="{{indicatorDots}}"
-  autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}">
-      <block wx:for="{{imgUrls}}" wx:key="key">
-        <swiper-item>
-          <image src="{{item}}" class="slide-image" width="355" height="150"/>
+    <swiper indicator-dots="{{indicatorDots}}" autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}">
+      <block wx:for="{{userInfo}}" wx:key="teacherInfo">
+        <swiper-item wx:if="{{item.types == 'teacher'}}">
+          <view class="userInfo-wrap">
+            <view class="userInfo-icon-wrap">
+              <view class="userInfo-icon"></view>
+            </view>
+            <view class="userInfo-info-wrap">
+              <view class="userInfo-info">
+                <view class="userInfo-info-name">姓名</view>
+                <view class="userInfo-info-detail">：{{item.name}}</view>
+              </view>
+              <view class="userInfo-info">
+                <view class="userInfo-info-name">教授课程</view>
+                <view class="userInfo-info-detail">：{{item.subjects}}</view>
+              </view>
+              <view class="userInfo-info">
+                <view class="userInfo-info-name">手机</view>
+                <view class="userInfo-info-detail">：{{item.mobilephone}}</view>
+              </view>
+              <view class="userInfo-info">
+                <view class="userInfo-info-name">QQ号码</view>
+                <view class="userInfo-info-detail">：{{item.qq}}</view>
+              </view>
+              <view class="userInfo-info">
+                <view class="userInfo-info-name">微信号码</view>
+                <view class="userInfo-info-detail">：{{item.wechat}}</view>
+              </view>
+            </view>
+          </view>
         </swiper-item>
       </block>
     </swiper>
     <view class="title-student">学生信息</view>
+    <block wx:for="{{userInfo}}" wx:key="studentInfo">
+      <view class="userInfo-wrap" wx:if="{{item.types == 'student'}}">
+        <view class="userInfo-icon-wrap">
+          <view class="userInfo-icon"></view>
+        </view>
+        <view class="userInfo-info-wrap">
+          <view class="userInfo-info">
+            <view class="userInfo-info-name">学号</view>
+            <view class="userInfo-info-detail">：{{item.studentId}}</view>
+          </view>
+          <view class="userInfo-info">
+            <view class="userInfo-info-name">姓名</view>
+            <view class="userInfo-info-detail">：{{item.name}}</view>
+          </view>
+          <view class="userInfo-info">
+            <view class="userInfo-info-name">性别</view>
+            <view class="userInfo-info-detail">：{{item.gender}}</view>
+          </view>
+          <view class="userInfo-info">
+            <view class="userInfo-info-name">手机</view>
+            <view class="userInfo-info-detail">：{{item.mobilephone}}</view>
+          </view>
+          <view class="userInfo-info">
+            <view class="userInfo-info-name">QQ号码</view>
+            <view class="userInfo-info-detail">：{{item.qq}}</view>
+          </view>
+          <view class="userInfo-info">
+            <view class="userInfo-info-name">微信号码</view>
+            <view class="userInfo-info-detail">：{{item.wechat}}</view>
+          </view>
+        </view>
+      </view>
+    </block>
   </view>
 </template>
 
@@ -34,125 +79,155 @@
   export default class Index extends wepy.page {
     // classinfo.json
     config = {
-
+      backgroundTextStyle: 'light',
+      navigationBarBackgroundColor: '#0099ff',
+      navigationBarTitleText: '网上学习平台',
+      navigationBarTextStyle: 'white',
+      enablePullDownRefresh: false
     }
-
     // classinfo.js
     data = {
-    imgUrls: [
-      'http://img02.tooopen.com/images/20150928/tooopen_sy_143912755726.jpg',
-      'http://img06.tooopen.com/images/20160818/tooopen_sy_175866434296.jpg',
-      'http://img06.tooopen.com/images/20160818/tooopen_sy_175833047715.jpg'
-    ],
-    indicatorDots: false,
-    autoplay: true,
-    interval: 5000,
-    duration: 1000
-  }
-  changeIndicatorDots (e) {
-    this.setData({
-      indicatorDots: !this.data.indicatorDots
-    })
-  }
-  changeAutoplay (e) {
-    this.setData({
-      autoplay: !this.data.autoplay
-    })
-  }
-  intervalChange (e) {
-    this.setData({
-      interval: e.detail.value
-    })
-  }
-  durationChange (e) {
-    this.setData({
-      duration: e.detail.value
-    })
-  }
+      userInfo: [{
+          types: 'teacher',
+          name: '吴欢达',
+          subjects: '网页设计与制作',
+          mobilephone: '13192294541',
+          qq: '583783099',
+          wechat: '583783099'
+        },
+        {
+          types: 'teacher',
+          name: '吴欢达',
+          subjects: '网页设计与制作',
+          mobilephone: '13192294541',
+          qq: '583783099',
+          wechat: '583783099'
+        },
+        {
+          types: 'teacher',
+          name: '余枫',
+          subjects: '网页设计与制作',
+          mobilephone: '13192294541',
+          qq: '583783099',
+          wechat: '583783099'
+        },
+        {
+          types: 'student',
+          studentId: '0104150210',
+          name: '凌波丽',
+          gender: '女',
+          mobilephone: '13192294541',
+          qq: '583783099',
+          wechat: '583783099'
+        },
+        {
+          types: 'student',
+          studentId: '0104150210',
+          name: '明日香',
+          gender: '女',
+          mobilephone: '13192294541',
+          qq: '583783099',
+          wechat: '583783099'
+        },
+        {
+          types: 'student',
+          studentId: '0104150210',
+          name: '碇真嗣',
+          gender: '男',
+          mobilephone: '13192294541',
+          qq: '583783099',
+          wechat: '583783099'
+        },
+        {
+          types: 'student',
+          studentId: '0104150210',
+          name: '葛城美里',
+          gender: '女',
+          mobilephone: '13192294541',
+          qq: '583783099',
+          wechat: '583783099'
+        }
+      ],
+      indicatorDots: true,
+      interval: 5000,
+      duration: 1000,
+      autoplay: true,
+      circular: true
+    }
+    changeIndicatorDots(e) {
+      this.setData({
+        indicatorDots: !this.data.indicatorDots
+      })
+    }
+    changeAutoplay(e) {
+      this.setData({
+        autoplay: !this.data.autoplay
+      })
+    }
   }
 </script>
 
 <style lang="less">
-.title-teacher,
-.title-student {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 20rpx 0 10rpx 0;
-  padding: 10rpx 0;
-  height: 30rpx;
-  color: #fff;
-}
-.title-teacher {
-  background-image: -webkit-linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 37, 37, 1) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  background-image: linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 37, 37, 1) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
-}
-.title-student {
-  background-image: -webkit-linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(52, 152, 219, 1) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  background-image: linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(52, 152, 219, 1) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
-}
-.userInfo-wrap {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  margin: 30rpx 30rpx 20rpx;
-  box-shadow: 5rpx 5rpx 15rpx #ccc;
-}
-.userInfo-icon-wrap {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 30%;
-}
-.userInfo-icon {
-  width: 110rpx;
-  height: 110rpx;
-  border-radius: 50rpx;
-}
-.userInfo-info-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: 70%;
-}
-.userInfo-info {
-  display: flex;
-  flex-direction: row;
-}
-.userInfo-info-name {
-  display: inline;
-  text-align-last: justify;
-  width: 150rpx;
-  // height:calc(-20rpx);
-}
-// .userInfo-info-name:after {
-//   display: inline;
-//   display: -webkit-inline-box;
-//   content: '';
-//   padding-left: 100%;
-// }
-.userInfo-info-detail {
-  display: flex;
-  justify-content: flex-start;
-}
+  .title-teacher,
+  .title-student {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20rpx 0 10rpx 0;
+    padding: 10rpx 0;
+    height: 30rpx;
+    color: #fff;
+  }
+  .title-teacher {
+    background-image: -webkit-linear-gradient( to right, rgba(255, 255, 255, 0) 0%, rgba(255, 37, 37, 1) 50%, rgba(255, 255, 255, 0) 100%);
+    background-image: linear-gradient( to right, rgba(255, 255, 255, 0) 0%, rgba(255, 37, 37, 1) 50%, rgba(255, 255, 255, 0) 100%);
+  }
+  .title-student {
+    background-image: -webkit-linear-gradient( to right, rgba(255, 255, 255, 0) 0%, rgba(52, 152, 219, 1) 50%, rgba(255, 255, 255, 0) 100%);
+    background-image: linear-gradient( to right, rgba(255, 255, 255, 0) 0%, rgba(52, 152, 219, 1) 50%, rgba(255, 255, 255, 0) 100%);
+  }
+  .userInfo-wrap {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 30rpx 30rpx 20rpx;
+    box-shadow: 5rpx 5rpx 15rpx #ccc;
+  }
+  .userInfo-icon-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30%;
+  }
+  .userInfo-icon {
+    width: 110rpx;
+    height: 110rpx;
+    border-radius: 50rpx;
+  }
+  .userInfo-info-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 100rpx;
+    padding: 10rpx 0;
+    width: 70%;
+  }
+  .userInfo-info {
+    display: flex;
+    flex-direction: row;
+  }
+  .userInfo-info-name {
+    display: inline;
+    text-align-last: justify;
+    width: 150rpx; // height:calc(-20rpx);
+  } // .userInfo-info-name:after {
+  //   display: inline;
+  //   display: -webkit-inline-box;
+  //   content: '';
+  //   padding-left: 100%;
+  // }
+  .userInfo-info-detail {
+    display: flex;
+    justify-content: flex-start;
+  }
 </style>

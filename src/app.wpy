@@ -72,7 +72,7 @@ export default class extends wepy.app {
   // app.js
   // version: 'v0.0.1', // 版本号
   onLaunch() {
-    console.log('test')
+    
   }
 }
 </script>

@@ -41,7 +41,7 @@
       </view>
       <view class="cur-course-content">
         <view class="cur-course-left">
-          <image src="/images/index/{{course.imgSrc}}"></image>
+          <image src="{{course.imgSrc}}"></image>
         </view>
         <view class="cur-course-right">
           <text style="margin-left: 10rpx;font-size: 15pt;font-weight:bold;">div+css的使用</text>
@@ -80,7 +80,7 @@
       },
       course: {
         name: '网页设计基础',
-        imgSrc: 'index.png',
+        imgSrc: '/images/index/index.png',
         content: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Explicabo possimus unde ducimus, a dolor natus blanditiis sint id enim excepturi praesentium dolores dignissimos corporis pariatur exercitationem in ex qui itaque!'
       }
     }

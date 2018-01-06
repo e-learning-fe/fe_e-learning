@@ -2,7 +2,4 @@ node_modules
 dist
 .DB_store
 *.wpy___jb_tmp___
-node_modules
-dist
-.DB_store
-*.wpy___jb_tmp___
+.wepyignore
