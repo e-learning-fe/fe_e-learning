@@ -12,5 +12,42 @@
 </script>
 
 <style lang="less">
- 
+  .container {
+    background-color: #f6f6f6;
+    padding: 0;
+  }
+  .user-info, .more-btn {
+    display: flex;
+    background-color: #fff;
+    min-height: 85rpx;
+    border-top: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
+  }
+  /* 用户信息 */
+  .user-info-box {
+    margin-bottom: 40rpx;
+  }
+  .user-info {
+    flex-direction: column;
+    margin: 30rpx 0 -1px;
+    padding: 25rpx 30rpx 20rpx;
+  }
+  .info-hd {
+    display: flex;
+    align-items: center;
+  }
+  .bind-btn {
+    color: #aaa;
+  }
+  .user-atavar {    
+    width: 120rpx;
+    height: 120rpx;
+    border-radius: 5px;
+  }
+  .user-title {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding-left: 25rpx;
+  }
 </style>

@@ -1,8 +1,7 @@
 <template>
   <view class="container">
+    <!-- 判断传递过来的用户类型，如果types为"teacher"则使用轮播图样式，否则使用竖式列表样式 -->
     <view class="title-teacher">教师信息</view>
-    <!-- 判断传递过来的用户类型，如果types为"teacher"则使用轮播图样式，
-              否则使用竖式列表样式 -->
     <!-- 轮播图 -->
     <swiper indicator-dots="{{indicatorDots}}" autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}">
       <block wx:for="{{userInfo}}" wx:key="teacherInfo">
@@ -86,74 +85,25 @@
       enablePullDownRefresh: false
     }
     // classinfo.js
+    /**
+     * Author: Huanda.Wu
+     * Date: 2018.01.06
+     */
     data = {
-      userInfo: [{
-          types: 'teacher',
-          name: '吴欢达',
-          subjects: '网页设计与制作',
-          mobilephone: '13192294541',
-          qq: '583783099',
-          wechat: '583783099'
-        },
-        {
-          types: 'teacher',
-          name: '吴欢达',
-          subjects: '网页设计与制作',
-          mobilephone: '13192294541',
-          qq: '583783099',
-          wechat: '583783099'
-        },
-        {
-          types: 'teacher',
-          name: '余枫',
-          subjects: '网页设计与制作',
-          mobilephone: '13192294541',
-          qq: '583783099',
-          wechat: '583783099'
-        },
-        {
-          types: 'student',
-          studentId: '0104150210',
-          name: '凌波丽',
-          gender: '女',
-          mobilephone: '13192294541',
-          qq: '583783099',
-          wechat: '583783099'
-        },
-        {
-          types: 'student',
-          studentId: '0104150210',
-          name: '明日香',
-          gender: '女',
-          mobilephone: '13192294541',
-          qq: '583783099',
-          wechat: '583783099'
-        },
-        {
-          types: 'student',
-          studentId: '0104150210',
-          name: '碇真嗣',
-          gender: '男',
-          mobilephone: '13192294541',
-          qq: '583783099',
-          wechat: '583783099'
-        },
-        {
-          types: 'student',
-          studentId: '0104150210',
-          name: '葛城美里',
-          gender: '女',
-          mobilephone: '13192294541',
-          qq: '583783099',
-          wechat: '583783099'
-        }
-      ],
+      page: 0,
+      pageSize: 4,
+      showMore: true,
+      remind: '上拉加载更多',
+      userInfo: [],
       indicatorDots: true,
       interval: 5000,
       duration: 1000,
       autoplay: true,
-      circular: true
+      circular: true  // 衔接滚动
     }
+    // 获取用户数据
+    // wepy.request('https://easy-mock.com/mock/5a50893dcce1483e3f2ea13a/gk_e-learning_test/userInfo').then((d) => console.log(d));
+    // 轮播图
     changeIndicatorDots(e) {
       this.setData({
         indicatorDots: !this.data.indicatorDots
@@ -164,12 +114,13 @@
         autoplay: !this.data.autoplay
       })
     }
+    // 分页加载
+
   }
 </script>
 
 <style lang="less">
-  .title-teacher,
-  .title-student {
+  .title-teacher, .title-student {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -192,6 +143,7 @@
     align-items: center;
     margin: 30rpx 30rpx 20rpx;
     box-shadow: 5rpx 5rpx 15rpx #ccc;
+    border-radius: 15rpx;
   }
   .userInfo-icon-wrap {
     display: flex;
