@@ -86,26 +86,16 @@
         content: 'loremsldfjsldkfjlwkejrflkjfdlsk'
       }
     }
-<<<<<<< HEAD
-    async onLoad() {
-      try {
-        await configs.getUser()
-=======
 
     async onLoad() {
       try {
         await configs.getUser()
         console.log(apis._user.is_bind)
->>>>>>> origin/dev
         
       } catch (e) {
         wepy.showModal({
           title: '提示',
-<<<<<<< HEAD
           content: `用户登录失败`
-=======
-          content: `用户登录失败，请截图本提示，并联系深大汪峰。${e.message}`
->>>>>>> origin/dev
         })
       }
       // console.log(configs.getUser())
