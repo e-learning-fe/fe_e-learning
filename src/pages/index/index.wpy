@@ -19,7 +19,7 @@
       <!-- 消息内容 -->
       <view class="tech-news-container">
         <text style="font-size: 12pt;">{{tech.name}}老师:
-                                          </text>
+                                            </text>
         <text style="margin-right: 20rpx;float: right;">{{tech.date}}</text>
         <view class="tech-news-content">
           {{tech.content}}
@@ -85,10 +85,18 @@
         content: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Explicabo possimus unde ducimus, a dolor natus blanditiis sint id enim excepturi praesentium dolores dignissimos corporis pariatur exercitationem in ex qui itaque!'
       }
     }
-    onLoad() {
-      console.log('hehe')
+    async onLoad() {
+      try {
+        await configs.getUser()
+        
+      } catch (e) {
+        wepy.showModal({
+          title: '提示',
+          content: `用户登录失败`
+        })
+      }
+      // console.log(configs.getUser())
     }
-    
   }
 </script>
 

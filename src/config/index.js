@@ -17,7 +17,7 @@ const configs = {
     let _this = this
     try {
       userinfoRaw = await _this.getUserInfo()
-      
+      apis._user.wx = userinfoRaw.userInfo
       userinfo = await wepy.request({
         url: `${apis._server}/learningsystem/WeChat/decodeUserInfo`,
         method: 'POST',

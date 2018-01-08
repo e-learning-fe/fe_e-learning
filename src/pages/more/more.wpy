@@ -4,7 +4,7 @@
     <view class="user-info-box">
       <view class="user-info">
         <view class="info-hd">
-          <image class="user-avatar" src=""></image>
+          <image class="user-avatar" src="{{userAvatar}}"></image>
           <view class="user-title">
             <text class="user-name"></text>
           </view>
@@ -54,6 +54,17 @@
     // more.json
     config = {
       enablePullDownRefresh: false
+    }
+
+    // more.js
+    data = {
+      
+    }
+
+    async onLoad() {
+      this.setData({
+        userAvatar: apis._user.wx.avatarUrl
+      })
     }
   }
 </script>

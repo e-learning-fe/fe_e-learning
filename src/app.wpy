@@ -75,7 +75,7 @@
     }
     onLaunch() {
       // let _this = this
-      configs.getUser()
+      // configs.getUser()
     }
   }
 </script>
