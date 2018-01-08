@@ -28,7 +28,8 @@
     config = {
       pages: [
         'pages/index/index',
-        'pages/classinfo/classinfo'
+        'pages/classinfo/classinfo',
+        'pages/more/more'
       ],
       window: {
         backgroundTextStyle: 'light',
