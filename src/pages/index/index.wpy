@@ -19,7 +19,7 @@
       <!-- 消息内容 -->
       <view class="tech-news-container">
         <text style="font-size: 12pt;">{{tech.name}}老师:
-                                            </text>
+                                              </text>
         <text style="margin-right: 20rpx;float: right;">{{tech.date}}</text>
         <view class="tech-news-content">
           {{tech.content}}
@@ -51,7 +51,7 @@
       <!-- 分割线 -->
       <view class="line"></view>
       <!-- 底部 -->
-      <view class="cur-course-more">查看更多</view>
+      <view class="cur-course-more">{{user}}查看更多</view>
     </view>
   </view>
 </template>
@@ -59,6 +59,7 @@
 <script>
   import wepy from 'wepy'
   import configs from '../../config'
+  import apis from '../../config/apis'
   export default class Index extends wepy.page {
     config = {
       navigationBarTitleText: '网上学习平台'
@@ -82,17 +83,29 @@
       course: {
         name: '网页设计基础',
         imgSrc: '/images/index/index.png',
-        content: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Explicabo possimus unde ducimus, a dolor natus blanditiis sint id enim excepturi praesentium dolores dignissimos corporis pariatur exercitationem in ex qui itaque!'
+        content: 'loremsldfjsldkfjlwkejrflkjfdlsk'
       }
     }
+<<<<<<< HEAD
     async onLoad() {
       try {
         await configs.getUser()
+=======
+
+    async onLoad() {
+      try {
+        await configs.getUser()
+        console.log(apis._user.is_bind)
+>>>>>>> origin/dev
         
       } catch (e) {
         wepy.showModal({
           title: '提示',
+<<<<<<< HEAD
           content: `用户登录失败`
+=======
+          content: `用户登录失败，请截图本提示，并联系深大汪峰。${e.message}`
+>>>>>>> origin/dev
         })
       }
       // console.log(configs.getUser())

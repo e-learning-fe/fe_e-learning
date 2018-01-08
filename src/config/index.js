@@ -10,12 +10,16 @@ const configs = {
     userinfo.code = loginData.code
     return userinfo
   },
+  hehe() {
+    return Promise.resolve().then(() => cons/o1e.log(hehe)).catch(() => console.log('sb'))
+  },
   // 在index调用
   async getUser() {
     let userinfoRaw = {}
     let userinfo = {}
     let _this = this
     try {
+      wepy.showNavigationBarLoading();
       userinfoRaw = await _this.getUserInfo()
       apis._user.wx = userinfoRaw.userInfo
       userinfo = await wepy.request({
@@ -31,11 +35,21 @@ const configs = {
           iv: userinfoRaw.iv
         }
       })
-      console.log(userinfo)
-      // await wepy.setStorage({
-      //   key: '_session',
-      //   data: userinfo.data.data.session
-      // })
+      // console.log(userinfo)
+      // await _this.hehe()
+      await wepy.setStorage({
+        key: '_session',
+        data: userinfo.data.data.session
+      })
+      // console.log(userinfo.data.data.is_bind)
+      apis._user.wx = userinfoRaw.userInfo
+      apis._user.is_bind = userinfo.data.data.is_bind
+      console.log(wepy.getStorageInfoSync('_session'))
+      if(!apis._user.is_bind){
+        wepy.navigateTo({
+          url: '/pages/more/login'
+        })
+      }
     } catch (e) {
       _this.showErrorModal('提示', `获取用户信息失败，请关闭重新进入。`);
     }

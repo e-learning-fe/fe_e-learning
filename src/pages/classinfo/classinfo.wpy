@@ -75,8 +75,7 @@
 
 <script>
   import wepy from 'wepy';
-  import configs from '../../config';
-  import apis from '../../config/apis'
+  import apis from '../../config/apis';
   export default class Index extends wepy.page {
     // classinfo.json
     config = {
@@ -123,12 +122,20 @@
         autoplay: !this.data.autoplay
       })
     }
+<<<<<<< HEAD
 
     async onLoad() {
       this.setData({
         userAvatar: apis._user.wx.avatarUrl
       })
+=======
+    // 分页加载
+    async onLoad() {
+      console.log(apis._user.wx.nickName)
+>>>>>>> origin/dev
     }
+
+    
   }
 </script>
 
