@@ -1,24 +1,12 @@
 import wepy from 'wepy'
+import apis from './apis.js'
 
-const apis = {
-  version: 'v0.0.1',
-  _server: 'http://studyonline.natapp4.cc'
-}
-
-const config = {
+const configs = {
   // 获取用户信息
-  async getUserInfo(cb) {
+  async getUserInfo() {
     const loginData = await wepy.login()
     let _this = this
-    const userinfo = await wepy.getUserInfo({
-      success: function(res) {
-        typeof cb === "function" && cb(res)
-      },
-      fail: function(res) {
-        _this.showErrorModal('拒绝授权将导致无法关联学校帐号并影响使用，请重新打开再点击允许授权！', '授权失败');
-        _this.g_status = '未授权'
-      }
-    })
+    const userinfo = await wepy.getUserInfo()
     userinfo.code = loginData.code
     return userinfo
   },
@@ -29,25 +17,30 @@ const config = {
     let _this = this
     try {
       userinfoRaw = await _this.getUserInfo()
+      
       userinfo = await wepy.request({
-        url: _this._server + '',
+        url: `${apis._server}/learningsystem/WeChat/decodeUserInfo`,
         method: 'POST',
         header: {
-          'x-wechat-code': userinfoRaw.code,
-          'x-wechat-encrypted': userinfoRaw.encryptedData,
-          'x-wechat-iv': userinfoRaw.iv
+          'content-type': 'application/x-www-form-urlencoded'
         },
         dataType: 'json',
-        data: {}
+        data: {
+          code: userinfoRaw.code,
+          key: userinfoRaw.encryptedData,
+          iv: userinfoRaw.iv
+        }
       })
-      await wepy.setStorage({
-        key: '_session',
-        data: userinfo.data.data.session
-      })
+      console.log(userinfo)
+      // await wepy.setStorage({
+      //   key: '_session',
+      //   data: userinfo.data.data.session
+      // })
     } catch (e) {
       _this.showErrorModal('提示', `获取用户信息失败，请关闭重新进入。`);
     }
   },
+
   showErrorModal(content, title) {
     wepy.showModal({
       title: title || '加载失败',
@@ -66,4 +59,4 @@ const config = {
   // }
 }
 
-export default {config, apis}
+export default configs

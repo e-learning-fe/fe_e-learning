@@ -1,0 +1,20 @@
+<template>
+  <view class="main-core">
+      <block wx:for="{{core}}" wx:key="index">
+        <navigatior class="main-core-item">
+          <image src="/images/core/{{item.id}}.png" class="core-item-icon"></image>
+          <text class="core-item-name disable">{{item.name}}</text>
+        </navigatior>
+      </block>
+    </view>
+</template>
+
+<script>
+  export default class List extends wepy.component{
+    
+  }
+</script>
+
+<style lang="less">
+
+</style>

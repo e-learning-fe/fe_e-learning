@@ -19,7 +19,7 @@
       <!-- 消息内容 -->
       <view class="tech-news-container">
         <text style="font-size: 12pt;">{{tech.name}}老师:
-                                        </text>
+                                          </text>
         <text style="margin-right: 20rpx;float: right;">{{tech.date}}</text>
         <view class="tech-news-content">
           {{tech.content}}
@@ -85,11 +85,10 @@
         content: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Explicabo possimus unde ducimus, a dolor natus blanditiis sint id enim excepturi praesentium dolores dignissimos corporis pariatur exercitationem in ex qui itaque!'
       }
     }
-    
-    onLaunch() {
-      // let _this = this
-      console.log('sdfsdf')
+    onLoad() {
+      console.log('hehe')
     }
+    
   }
 </script>
 
