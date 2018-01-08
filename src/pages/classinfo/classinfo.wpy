@@ -79,10 +79,6 @@
   export default class Index extends wepy.page {
     // classinfo.json
     config = {
-      backgroundTextStyle: 'light',
-      navigationBarBackgroundColor: '#0099ff',
-      navigationBarTitleText: '网上学习平台',
-      navigationBarTextStyle: 'white',
       enablePullDownRefresh: false
     }
     // classinfo.js
@@ -101,11 +97,11 @@
         {types: 'teacher', name: '游琪', subjects: '网页设计与制作', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
         {types: 'teacher', name: '游琪', subjects: '网页设计与制作', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
         {types: 'teacher', name: '游琪', subjects: '网页设计与制作', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
-        {types: 'student', name: '吴欢达', gender: '男', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
-        {types: 'student', name: '余枫', gender: '男', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
-        {types: 'student', name: '凌波丽', gender: '女', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
-        {types: 'student', name: '碇真嗣', gender: '男', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
-        {types: 'student', name: '明日香', gender: '女', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
+        {types: 'student', studentId: '0104150210', name: '吴欢达', gender: '男', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
+        {types: 'student', studentId: '0104150211', name: '余枫', gender: '男', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
+        {types: 'student', studentId: '0104150212', name: '凌波丽', gender: '女', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
+        {types: 'student', studentId: '0104150213', name: '碇真嗣', gender: '男', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
+        {types: 'student', studentId: '0104150214', name: '明日香', gender: '女', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
       ],
       indicatorDots: true,
       interval: 5000,
