@@ -6,6 +6,7 @@ const apis = {
     wx: {},
     //学生\老师数据
     we: {}
-  }
+  },
+  _time: {} // 当前学期周数
 }
 export default apis
