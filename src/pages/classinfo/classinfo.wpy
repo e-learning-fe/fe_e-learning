@@ -75,6 +75,7 @@
 
 <script>
   import wepy from 'wepy';
+  import configs from '../../config';
   export default class Index extends wepy.page {
     // classinfo.json
     config = {
@@ -94,7 +95,18 @@
       pageSize: 4,
       showMore: true,
       remind: '上拉加载更多',
-      userInfo: [],
+      userInfo: [
+        {types: 'teacher', name: '游琪', subjects: '网页设计与制作', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
+        {types: 'teacher', name: '游琪', subjects: '网页设计与制作', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
+        {types: 'teacher', name: '游琪', subjects: '网页设计与制作', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
+        {types: 'teacher', name: '游琪', subjects: '网页设计与制作', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
+        {types: 'teacher', name: '游琪', subjects: '网页设计与制作', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
+        {types: 'student', name: '吴欢达', gender: '男', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
+        {types: 'student', name: '余枫', gender: '男', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
+        {types: 'student', name: '凌波丽', gender: '女', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
+        {types: 'student', name: '碇真嗣', gender: '男', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
+        {types: 'student', name: '明日香', gender: '女', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
+      ],
       indicatorDots: true,
       interval: 5000,
       duration: 1000,
@@ -116,6 +128,11 @@
     }
     // 分页加载
 
+
+    onLoad() {
+      const _version = configs.apis.version;
+      console.log("版本号：" + _version);
+    }
   }
 </script>
 

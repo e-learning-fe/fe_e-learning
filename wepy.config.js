@@ -28,18 +28,16 @@ module.exports = {
     babel: {
       sourceMap: true,
       presets: [
-        'env'
+        "es2015",
+        "stage-1"
       ],
       plugins: [
-        'transform-class-properties',
-        'transform-decorators-legacy',
-        'transform-object-rest-spread',
-        'transform-export-extensions',
+        "transform-export-extensions",
+        "syntax-export-extensions"
       ]
     }
   },
-  plugins: {
-  },
+  plugins: {},
   appConfig: {
     noPromiseAPI: ['createSelectorQuery']
   }
@@ -52,14 +50,15 @@ if (prod) {
   // module.exports.compilers['sass'] = {outputStyle: 'compressed'}
 
   // 压缩less
-  module.exports.compilers['less'] = {compress: true}
+  module.exports.compilers['less'] = {
+    compress: true
+  }
 
   // 压缩js
   module.exports.plugins = {
     uglifyjs: {
       filter: /\.js$/,
-      config: {
-      }
+      config: {}
     },
     imagemin: {
       filter: /\.(jpg|png|jpeg)$/,

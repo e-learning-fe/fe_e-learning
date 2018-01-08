@@ -10,7 +10,7 @@ const config = {
   async getUserInfo(cb) {
     const loginData = await wepy.login()
     let _this = this
-    const userinfo = await wepy.getUserInfo({
+    const userinfo = await _this.getUserInfo({
       success: function(res) {
         typeof cb === "function" && cb(res)
       },
@@ -30,7 +30,7 @@ const config = {
     try {
       userinfoRaw = await _this.getUserInfo()
       userinfo = await wepy.request({
-        url: _this._server + '',
+        url: _this.apis._server + '',
         method: 'POST',
         header: {
           'x-wechat-code': userinfoRaw.code,
