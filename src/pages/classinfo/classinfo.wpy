@@ -75,7 +75,7 @@
 
 <script>
   import wepy from 'wepy';
-  import configs from '../../config';
+  import apis from '../../config/apis';
   export default class Index extends wepy.page {
     // classinfo.json
     config = {
@@ -123,12 +123,11 @@
       })
     }
     // 分页加载
-
-
-    onLoad() {
-      const _version = configs.apis.version;
-      console.log("版本号：" + _version);
+    async onLoad() {
+      console.log(apis._user.wx.nickName)
     }
+
+    
   }
 </script>
 
