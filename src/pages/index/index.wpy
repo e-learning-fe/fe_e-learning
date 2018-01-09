@@ -90,7 +90,7 @@
     async onLoad() {
       try {
         await configs.getUser()
-        console.log(apis._user.is_bind)
+        // console.log(apis._user.is_bind)
         
       } catch (e) {
         wepy.showModal({
