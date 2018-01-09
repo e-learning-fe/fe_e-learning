@@ -11,6 +11,7 @@ const apis = {
   cache: {},
   key (data) {
     return util.key(data)
-  }
+  },
+  _time: {} // 当前学期周数
 }
 export default apis

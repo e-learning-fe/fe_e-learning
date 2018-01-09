@@ -2,58 +2,129 @@
   <view class="container">
     <!-- userInfo -->
     <view class="user-info-box">
-      <view class="user-info">
+      <block wx:if="{{is_bind}}">
+        <view class="user-info">
+          <block wx:for="{{userInfo}}" wx:key="userInfo">
+            <view class="info-hd">
+              <image class="user-atavar" src="{{userAvatar}}"></image>
+              <view class="user-title">
+                <text class="user-name">{{item.name}}</text>
+              </view>
+              <view class="time-box">
+                <text class="time-term">{{time.term}}</text>
+                <text class="time-now">第{{time.week}}周 - 星期{{time.day}}</text>
+              </view>
+            </view>
+            <view class="info-bd">
+              <view class="info-bd-left">
+                <text>性别：{{item.gender}}</text>
+                <text>年级：{{item.grade}}</text>
+                <text>班级：{{item.classNo}}</text>
+              </view>
+              <view class="info-bd-right">
+                <text>学号：{{item.studentId}}</text>
+                <text>学院：{{item.college}}</text>
+                <text>专业：{{item.major}}</text>
+              </view>
+            </view>
+          </block>
+        </view>
+        <navigator url="append" class="append-link">
+          <view class="more-btn">
+            <image class="btn-icon" src="../../images/more/append.png"></image>
+            <text>完善信息</text>
+            <view class="btn-open">
+              <image class="btn-enter" src="../../images/more/enter.png"></image>
+            </view>
+          </view>
+        </navigator>
+      </block>
+      <navigator url="/pages/more/login" class="user-info" wx:else>
         <view class="info-hd">
-          <image class="user-avatar" src=""></image>
+          <image class="user-atavar" src="{{userAvatar}}"></image>
           <view class="user-title">
-            <text class="user-name"></text>
+            <text class="user-name">{{userNickName}}</text>
+            <text class="user-id">未绑定</text>
           </view>
-          <view class="time-box">
-            <text class="time-term">{{time.term}}</text>
-            <text class="time-now">第{{time.week}}周 - 星期{{time.day}}</text>
-          </view>
-        </view>
-        <view class="info-bd">
-          <view class="info-bd-left">
-            <text>性别：</text>
-            <text>年级：</text>
-            <text>班级：</text>
-          </view>
-          <view class="info-bd-right">
-            <text>学号：</text>
-            <text>学院：</text>
-            <text>专业：</text>
+          <text class="bind-btn">前往绑定</text>
+          <view class="btn-open">
+            <image class="btn-enter" src="../../images/more/enter.png"></image>
           </view>
         </view>
-      </view>
+      </navigator>
     </view>
-      <view class="more-list">
-        <navigator url="" class="issue-li nk">
-          <view class="more-btn">
-            <image class="btn-icon" src="../../images/more/issue.png"></image>
-            <text class="btn-text">反馈</text>
-            <view class="btn-open"></view>
-            <image class="btn-enter" src="../../images/more/enter.png"></image>
-          </view>
-        </navigator>
-        <navigator url="" class="issue-link">
-          <view class="more-btn">
-            <image class="btn-icon" src="../../images/more/about.png"></image>
-            <text class="btn-text">关于</text>
-            <view class="btn-open"></view>
-            <image class="btn-enter" src="../../images/more/enter.png"></image>
-          </view>
-        </navigator>
-      </view>
+    <!-- 更多系列 -->
+    <view class="more-list">
+      <navigator url="issue" class="issue-link">
+        <view class="more-btn">
+          <image class="btn-icon" src="../../images/more/issue.png"></image>
+          <text class="btn-text">反馈</text>
+          <view class="btn-open"></view>
+          <image class="btn-enter" src="../../images/more/enter.png"></image>
+        </view>
+      </navigator>
+      <navigator url="about" class="about-link">
+        <view class="more-btn">
+          <image class="btn-icon" src="../../images/more/about.png"></image>
+          <text class="btn-text">关于</text>
+          <view class="btn-open"></view>
+          <image class="btn-enter" src="../../images/more/enter.png"></image>
+        </view>
+      </navigator>
+    </view>
+    <!-- 立即绑定按钮、切换绑定按钮 -->
+    <navigator url="login" class="login-btn">
+      <text wx:if="{{is_bind}}">切换绑定</text>
+      <text wx:else>立即绑定</text>
+    </navigator>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
-  export default class extends wepy.page{
+  import apis from '../../config/apis.js'
+  export default class extends wepy.page {
     // more.json
     config = {
       enablePullDownRefresh: false
+    }
+    // more.js
+    data = {
+      userInfo: [{
+        types: 'student',
+        studentId: '0104150210',
+        name: '吴欢达',
+        gender: '男',
+        mobilephone: '13192294541',
+        qq: '583783099',
+        wechat: 'myWechat_2018',
+        grade: '大三',
+        classNo: '15软件2(JAVA)班',
+        college: '计算机学院',
+        major: '软件技术'
+      }]
+    }
+    // 获取用户头像
+    async onLoad() {
+      this.setData({
+        userAvatar: apis._user.wx.avatarUrl,
+        userNickName: apis._user.wx.nickName
+      });
+    }
+    // 获取时间
+    onShow() {
+      this.getData();
+    }
+    getData() {
+      let _this = this;
+      let days = ['一', '二', '三', '四', '五', '六', '日'];
+      _this.setData({
+        'time': {
+          'week': '19',
+          'day': days[1 - 1]
+        },
+        'is_bind': !!apis._user.is_bind
+      });
     }
   }
 </script>
@@ -77,13 +148,16 @@
   .user-info {
     flex-direction: column;
     margin: 30rpx 0 -1px;
-    padding: 25rpx 30rpx 20rpx;
+    padding: 25rpx 20rpx 20rpx;
   }
   .info-hd {
     display: flex;
     align-items: center;
   }
-  .user-atavar {    
+  .bind-btn {
+    color: #aaa;
+  }
+  .user-atavar {
     width: 120rpx;
     height: 120rpx;
     border-radius: 5px;
@@ -98,6 +172,10 @@
     font-size: 16pt;
     line-height: 160%;
     letter-spacing: 1px;
+  }
+  .user-id {
+    font-size: 11pt;
+    color: #8b8b8b;
   }
   .time-box {
     display: flex;
@@ -124,7 +202,6 @@
     -webkit-flex-shrink: 0;
     padding-right: 30rpx;
   }
-
   /* more-list */
   .more-list {
     display: flex;

@@ -95,12 +95,11 @@
       } catch (e) {
         wepy.showModal({
           title: '提示',
-          content: '用户登录失败'
+          content: `用户登录失败`
         })
       }
       // console.log(configs.getUser())
     }
-    
   }
 </script>
 

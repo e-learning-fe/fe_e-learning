@@ -7,8 +7,8 @@
       <block wx:for="{{userInfo}}" wx:key="teacherInfo">
         <swiper-item wx:if="{{item.types == 'teacher'}}">
           <view class="userInfo-wrap">
-            <view class="userInfo-icon-wrap">
-              <view class="userInfo-icon"></view>
+            <view class="userInfo-avatar-wrap">
+              <image class="userInfo-avatar" src="{{userAvatar}}"></image>
             </view>
             <view class="userInfo-info-wrap">
               <view class="userInfo-info">
@@ -39,8 +39,8 @@
     <view class="title-student">学生信息</view>
     <block wx:for="{{userInfo}}" wx:key="studentInfo">
       <view class="userInfo-wrap" wx:if="{{item.types == 'student'}}">
-        <view class="userInfo-icon-wrap">
-          <view class="userInfo-icon"></view>
+        <view class="userInfo-avatar-wrap">
+          <image class="userInfo-avatar" src="{{userAvatar}}"></image>
         </view>
         <view class="userInfo-info-wrap">
           <view class="userInfo-info">
@@ -122,9 +122,11 @@
         autoplay: !this.data.autoplay
       })
     }
-    // 分页加载
+
     async onLoad() {
-      console.log(apis._user.wx.nickName)
+      this.setData({
+        userAvatar: apis._user.wx.avatarUrl
+      })
     }
 
     
@@ -154,27 +156,26 @@
     justify-content: space-around;
     align-items: center;
     margin: 30rpx 30rpx 20rpx;
+    padding: 20rpx 0;
     box-shadow: 5rpx 5rpx 15rpx #ccc;
     border-radius: 15rpx;
   }
-  .userInfo-icon-wrap {
+  .userInfo-avatar-wrap {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 30%;
+    width: 35%;
   }
-  .userInfo-icon {
-    width: 110rpx;
-    height: 110rpx;
+  .userInfo-avatar {
+    width: 140rpx;
+    height: 140rpx;
     border-radius: 50rpx;
   }
   .userInfo-info-wrap {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    margin-left: 100rpx;
-    padding: 10rpx 0;
-    width: 70%;
+    width: 65%;
   }
   .userInfo-info {
     display: flex;

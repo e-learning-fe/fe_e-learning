@@ -1,6 +1,6 @@
 import wepy from 'wepy'
 import apis from './apis.js'
-import util from '../uitls/base64.min.js'
+import util from '../utils/base64.min.js'
 const configs = {
   // 获取用户信息
   async getUserInfo() {
