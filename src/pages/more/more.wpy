@@ -84,8 +84,8 @@
   import wepy from 'wepy'
   import apis from '../../config/apis.js'
   export default class extends wepy.page {
-    // more.json
     config = {
+      // more.json
       enablePullDownRefresh: false
     }
     // more.js

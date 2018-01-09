@@ -27,8 +27,8 @@
   import 'wepy-async-function'
   import configs from './config'
   export default class extends wepy.app {
-    // app.json
     config = {
+    // app.json
       pages: [
         'pages/index/index',
         'pages/classinfo/classinfo',

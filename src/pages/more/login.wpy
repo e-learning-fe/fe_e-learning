@@ -1,14 +1,102 @@
 <template>
-  <view>hwehwe</view>
+  <view class="container">
+    <image class="title" src="../../images/more/title.png"></image>
+    <view class="content">
+    </view>
+  </view>
 </template>
 
 <script>
   import wepy from 'wepy'
   export default class login extends wepy.page {
-    
+    config = {
+      // login.json
+      // navigationBarBackgroundColor: '#040611',
+      enablePullDownRefresh: false
+    }
+    // login.js
   }
 </script>
 
 <style lang="less">
-
+  /* 毛玻璃特效 */
+  .container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    filter: blur(3px);
+    margin: -30px;
+    background-image: url('https://studyonline.natapp4.cc/learningsystem/images/more/login_bg2.png');
+    /*微信暂不支持静态bgimg文件，改用服务器url*/
+    background-repeat: no-repeat;
+    background-color: #f0eff5;
+    background-size: 100% 100%;
+  }
+  .container {
+    position: relative;
+    background: hsla(0, 0%, 100%, .3);
+    overflow: hidden;
+  }
+  .content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    position: relative;
+    z-index: 10;
+    align-items: stretch;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding-bottom: 450rpx;
+  }
+  .title {
+    position: absolute;
+    top: 200rpx;
+    left: 50%;
+    width: 600rpx;
+    height: 200rpx;
+    margin-left: -300rpx;
+    opacity: 0;
+    animation: show 2.5s cubic-bezier(0.19, 1, 0.22, 1) .5s forwards;
+  }
+  @keyframes show {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: .95;
+    }
+  }
+  .bd {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: stretch;
+    position: relative;
+    animation: bd-rise 2s cubic-bezier(0.23, 1, 0.32, 1) .75s forwards;
+    opacity: 0;
+  }
+  .form {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+  }
+  .input-group {
+    display: flex;
+    align-items: center;
+    margin: 40rpx 3%;
+    padding: 25rpx 10rpx;
+    border-bottom: 2px solid #f4f4f4;
+    opacity: 0;
+  }
+  .input-label {
+    width: 25rpx;
+    height: 25rpx;
+    padding: 0 25rpx;
+  }
 </style>
