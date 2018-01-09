@@ -22,9 +22,11 @@
   }
 </style>
 
+
 <script>
   import wepy from 'wepy'
   import 'wepy-async-function'
+  import apis from './config/apis'
   import configs from './config'
   export default class extends wepy.app {
     // app.json
@@ -78,7 +80,13 @@
       this.use('promisify')
     }
     async onLaunch() {
-      
+      let a = wepy.getStorageInfoSync()
+      a.keys.forEach((i) => {
+        // console.log(wepy.getStorageSync(i))
+        apis.cache[i] = wepy.getStorageSync(i)
+      });
+      console.log(apis)
+      console.log(apis.cache)
     }
   }
 </script>

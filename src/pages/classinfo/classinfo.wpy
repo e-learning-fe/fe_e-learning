@@ -76,7 +76,7 @@
 <script>
   import wepy from 'wepy';
   import apis from '../../config/apis';
-  export default class Index extends wepy.page {
+  export default class Classinfo extends wepy.page {
     // classinfo.json
     config = {
       enablePullDownRefresh: false

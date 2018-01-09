@@ -38,7 +38,7 @@ const configs = {
           iv: userinfoRaw.iv
         }
       })
-      console.log(userinfo.data.data)
+      // console.log(userinfo.data.data)
       _this.saveCache('_session', userinfo.data.data.session)
       // console.log(userinfo.data.data.is_bind)
       apis._user.is_bind = userinfo.data.data.is_bind

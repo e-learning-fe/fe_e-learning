@@ -1,4 +1,4 @@
-import util from '../uitls/util'
+import util from '../utils/util'
 const apis = {
   version: 'v0.0.1',
   _server: 'https://studyonline.natapp4.cc',
