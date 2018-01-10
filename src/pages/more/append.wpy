@@ -1,0 +1,48 @@
+<template>
+  <view class="container">
+    <iamge class="title" src="../../images/more/title.png"></iamge>
+    <view class="content">
+      <view class="hd"></view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import apis from '../../config/apis.js'
+  export default {
+    config = {
+      // append.json
+    }
+  }
+</script>
+
+<style lang="less">
+  @import './login.wxss';
+  .append-title {
+    position: absolute;
+    top: 75rpx;
+    width: 100%;
+    color: #f4f4f4;
+    font-size: 20pt;
+    line-break: 200%;
+    text-align: center;
+  }
+  .append-form {
+    padding: 150rpx 0 50rpx;
+  }
+  .append-form .input-group {
+    padding: 20rpx 8rpx;
+    margin: 30rpx 10%;
+  }
+  .append-form .input-label {
+    font-size: 11pt;
+    height: 20rpx;
+    line-height: 20rpx;
+    padding: 0 20rpx;
+  }
+  .append-form .input-group input, .append-form .input-group picker {
+    font-size: 11pt;
+    padding: 0 20rpx;
+  }
+</style>

@@ -62,7 +62,7 @@
         'pages/index/index',
         'pages/classinfo/classinfo',
         'pages/more/more',
-        'pages/more/login'
+        'pages/more/login',
       ],
       window: {
         backgroundTextStyle: 'light',

@@ -22,9 +22,9 @@
             </view>
             <view class="select-box">
               <radio-group class="radio-group" bindchange="radioChange">
-                <label class="radio" wx:for="{{userType}}" wx:key="{{userType}}">
-                  <radio id="types" value="{{item.types}}" checked="{{item.checked}}"/>{{item.value}}
-                </label>
+                <label class="radio select-btn" wx:for="{{userType}}" wx:key="{{userType}}">
+                                <radio id="types" value="{{item.types}}" checked="{{item.checked}}"/>{{item.value}}
+                              </label>
               </radio-group>
             </view>
           </form>
@@ -85,83 +85,82 @@
         }
       ]
     }
-    async onReady() {
-      let _this = this;
-      await setTimout(() => {
-        _this.setData({
+    onReady() {
+      setTimeout(async () => {
+        await this.setData({
           remind: ''
         });
       }, 1000);
     }
+    bind() {
+      let _this = this;
+      if (apis.g_status) {
+        apis.showErrorModal(apis.g_status, '绑定失败');
+        return;
+      }
+      if (!_this.data.userid || !_this.data.password) {
+        apis.showErrorModal('账号密码不能位空', '提醒');
+        return false;
+      }
+      apis.showLoadToast('绑定中');
+      wepy.request({
+        url: `${apis._server}/BindServlet`,
+        method: 'POST',
+        header: {
+          'content-type': 'application/x-www-form-urlencoded'
+        },
+        dataType: 'json',
+        data: {
+          openid: apis._user.openid,
+          userid: _this.data.userid,
+          password: _this.data.password,
+          types: _this.data.types
+        }
+      }).then((res) => {
+        if (res.data && res.data.status >= 200 && res.data.status < 400) {
+          apis.showLoadToast('请稍后');
+          // 清除缓存
+          wepy.clearStorage(); // 清理本地数据缓存
+          apis.getUser(() => {
+            wepy.showToast({
+              title: '绑定成功',
+              icon: 'success',
+              duration: 1500
+            });
+            // 完善个人信息
+            // if (!apis._user.teacher) {
+            setTimeout(async () => {
+              await wepy.showModal({
+                title: '提示',
+                content: '部分功能需要完善信息才能正常使用，是否前往完善信息？',
+                cancelText: '以后再说',
+                confirmText: '完善信息'
+              }).then((res) => {
+                if (res.confirm) {
+                  wepy.redirectTo({
+                    url: 'append'
+                  });
+                } else {
+                  wepy.navigateBack();
+                }
+              });
+            }, 1500);
+            // } else {
+            //   wepy.navigateBack();
+            // }
+            wepy.navigateBack();
+          });
+        } else {
+          wepy.hideToast();
+          apis.showErrorModal('您输入的账号或密码错误，请重新输入', '绑定失败');
+        }
+      }, (res) => {
+        wepy.hideToast();
+        apis.showErrorModal(res.errMsg, '绑定失败');
+      });
+    }
     //事件处理函数(集中保存在methods对象中)
     methods = {
-      async bind() {
-        let _this = this;
-        if (apis.g_status) {
-          apis.showErrorModal(apis.g_status, '绑定失败');
-          return;
-        }
-        if (!_this.data.userid || !_this.data.password) {
-          apis.showErrorModal('账号密码不能位空', '提醒');
-          return false;
-        }
-        apis.showLoadToast('绑定中');
-        await wepy.request({
-          url: `${apis._server}/BindServlet`,
-          method: 'POST',
-          header: {
-            'content-type': 'application/x-www-form-urlencoded'
-          },
-          dataType: 'json',
-          data: {
-            openid: apis._user.openid,
-            userid: _this.data.userid,
-            password: _this.data.password,
-            types: _this.data.types
-          }
-        }).then((res) => {
-          if (res.data && res.data.status >= 200 && res.data.status < 400) {
-            apis.showLoadToast('请稍后');
-            // 清除缓存
-            wx.clearStorage(); // 清理本地数据缓存
-            apis.getUser(() => {
-              wx.showToast({
-                title: '绑定成功',
-                icon: 'success',
-                duration: 1500
-              });
-              // 完善个人信息
-              // if (!apis._user.teacher) {
-              setTimeout(() => {
-                wx.showModal({
-                  title: '提示',
-                  content: '部分功能需要完善信息才能正常使用，是否前往完善信息？',
-                  cancelText: '以后再说',
-                  confirmText: '完善信息'
-                }).then((res) => {
-                  if (res.confirm) {
-                    wx.redirectTo({
-                      url: 'append'
-                    });
-                  } else {
-                    wx.navigateBack();
-                  }
-                });
-              }, 1500);
-              // } else {
-              //   wx.navigateBack();
-              // }
-              wx.navigateBack();
-            });
-          } else {
-            wx.hideToast();
-            apis.showErrorModal('您输入的账号或密码错误，请重新输入', '绑定失败');
-          }
-        }, (res) => {
-          wx.hideToast();
-          apis.showErrorModal(res.errMsg, '绑定失败');
-        });
-      },
       useridInput(e) {
         this.setData({
           userid: e.detail.value
@@ -336,9 +335,12 @@
   }
   .select-box {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     color: #f4f4f4;
+  }
+  .select-btn {
+    padding-left: 0 50rpx;
   }
   .confirm-btn {
     font-size: 13pt;
