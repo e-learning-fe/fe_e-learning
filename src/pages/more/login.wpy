@@ -1,25 +1,65 @@
 <template>
   <view class="container">
-    <image class="title" src="../../images/more/title.png"></image>
-    <view class="content">
-      <view class="bd">
-        <view class="form">
-          <view class="input-group">
-            <image class="input-label" src="../../images/more/user_icon.png"></image>
-            <input type="number" cursor-spacing="30" id="userid" maxlength="10" placeholder="请输入10位学号" placeholder-style="color: #fff; font-size: 10pt;" />
+    <view class="remind-box" wx:if="{{remind}}">
+      <image class="remind-img" src="../../images/index/loading.gif"></image>
+    </view>
+    <block wx:else>
+      <image class="title" src="../../images/more/title.png"></image>
+      <view class="content">
+        <view class="bd">
+          <form class="login-form">
+            <view class="input-group">
+              <image class="input-label" src="../../images/more/user_icon.png"></image>
+              <input type="number" cursor-spacing="30" id="userid" maxlength="10" placeholder="请输入10位学号" placeholder-style="color: #f4f4f4; font-size: 10pt;" bindinput="useridInput" bindfocus="inputFocus" bindblur="inputBlur" />
+            </view>
+            <view class="input-group">
+              <image class="input-label" src="../../images/more/password_icon.png"></image>
+              <input type="password" cursor-spacing="30" id="password" placeholder="初始密码为身份证后6位" placeholder-style="color: #f4f4f4; font-size: 10pt;" bindinput="useridInput" bindfocus="inputFocus" bindblur="inputBlur" />
+            </view>
+            <view class="login-help" @tap="showHelp">
+              <text>帮助</text>
+              <image class="login-help-img" src="../../images/more/help.png"></image>
+            </view>
+            <view class="select-box">
+              <radio-group class="radio-group" bindchange="radioChange">
+                <label class="radio" wx:for="{{userType}}" wx:key="{{userType}}">
+                  <radio id="types" value="{{item.types}}" checked="{{item.checked}}"/>{{item.value}}
+                </label>
+              </radio-group>
+            </view>
+          </form>
+          <view class="confirm-btn" @tap="bind">
+            <text>确认绑定</text>
           </view>
-          <view class="input-group">
-            <image class="input-label" src="../../images/more/password_icon.png"></image>
-            <input type="password" cursor-spacing="30" id="password" placeholder="初始密码为身份证后6位" placeholder-style="color: #fff; font-size: 10pt;"/>
+        </view>
+        <view class="help" id="help" wx:if="{{help_status}}" @tap="tapHelp">
+          <view class="box">
+            <view class="box-hd">
+              <text class="box-title">帮助</text>
+              <image class="box-close" src="../../images/more/close.png"></image>
+            </view>
+            <view class="box-bd">
+              <view class="help-q">1、账号和密码是什么？</view>
+              <view class="help-a">
+                <text>账号：学生证上面的10位学号</text>
+                <text>密码：初始密码或者已更改密码</text>
+                <text>其中初始密码与个人身份证号码相关，采用以下规则：①身份证号码：取最后6位作为密码；②身份证号码最后一位是x的默认大写；③无居民身份证的人员（如国外留学生等），密码与统一认证码相同</text>
+              </view>
+              <view class="help-q">2、忘记密码？</view>
+              <view class="help-a">
+                <text>请访问统一身份认证平台（http://ids.gdit.edu.cn/authserver）进行忘记密码操作</text>
+              </view>
+            </view>
           </view>
         </view>
       </view>
-    </view>
+    </block>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
+  import apis from '../../config/apis.js'
   export default class login extends wepy.page {
     config = {
       // login.json
@@ -27,6 +67,149 @@
       enablePullDownRefresh: false
     }
     // login.js
+    data = {
+      remind: '加载中',
+      help_status: false,
+      userid_focus: false,
+      password_focus: false,
+      userid: '',
+      password: '',
+      userType: [{
+          types: 'teacher',
+          value: '教师'
+        },
+        {
+          types: 'student',
+          value: '学生',
+          checked: 'true'
+        }
+      ]
+    }
+    async onReady() {
+      let _this = this;
+      await setTimout(() => {
+        _this.setData({
+          remind: ''
+        });
+      }, 1000);
+    }
+    //事件处理函数(集中保存在methods对象中)
+    methods = {
+      async bind() {
+        let _this = this;
+        if (apis.g_status) {
+          apis.showErrorModal(apis.g_status, '绑定失败');
+          return;
+        }
+        if (!_this.data.userid || !_this.data.password) {
+          apis.showErrorModal('账号密码不能位空', '提醒');
+          return false;
+        }
+        apis.showLoadToast('绑定中');
+        await wepy.request({
+          url: `${apis._server}/BindServlet`,
+          method: 'POST',
+          header: {
+            'content-type': 'application/x-www-form-urlencoded'
+          },
+          dataType: 'json',
+          data: {
+            openid: apis._user.openid,
+            userid: _this.data.userid,
+            password: _this.data.password,
+            types: _this.data.types
+          }
+        }).then((res) => {
+          if (res.data && res.data.status >= 200 && res.data.status < 400) {
+            apis.showLoadToast('请稍后');
+            // 清除缓存
+            wx.clearStorage(); // 清理本地数据缓存
+            apis.getUser(() => {
+              wx.showToast({
+                title: '绑定成功',
+                icon: 'success',
+                duration: 1500
+              });
+              // 完善个人信息
+              // if (!apis._user.teacher) {
+              setTimeout(() => {
+                wx.showModal({
+                  title: '提示',
+                  content: '部分功能需要完善信息才能正常使用，是否前往完善信息？',
+                  cancelText: '以后再说',
+                  confirmText: '完善信息'
+                }).then((res) => {
+                  if (res.confirm) {
+                    wx.redirectTo({
+                      url: 'append'
+                    });
+                  } else {
+                    wx.navigateBack();
+                  }
+                });
+              }, 1500);
+              // } else {
+              //   wx.navigateBack();
+              // }
+              wx.navigateBack();
+            });
+          } else {
+            wx.hideToast();
+            apis.showErrorModal('您输入的账号或密码错误，请重新输入', '绑定失败');
+          }
+        }, (res) => {
+          wx.hideToast();
+          apis.showErrorModal(res.errMsg, '绑定失败');
+        });
+      },
+      useridInput(e) {
+        this.setData({
+          userid: e.detail.value
+        });
+      },
+      passwordInput(e) {
+        this.setData({
+          password: e.detail.value
+        });
+      },
+      inputFocus(e) {
+        if (e.target.id == 'userid') {
+          this.setData({
+            'userid_focus': true
+          });
+        } else if (e.target.id == 'password') {
+          this.setData({
+            'password_focus': true
+          });
+        }
+      },
+      inputBlur(e) {
+        if (e.target.id == 'userid') {
+          this.setData({
+            'userid_focus': false
+          });
+        } else if (e.target.id == 'password') {
+          this.setData({
+            'password_focus': false
+          });
+        }
+      },
+      tapHelp(e) {
+        if (e.target.id == 'help') {
+          this.hideHelp();
+        }
+      },
+      showHelp(e) {
+        this.setData({
+          'help_status': true
+        });
+      },
+      hideHelp(e) {
+        this.setData({
+          'help_status': false
+        });
+      }
+    }
   }
 </script>
 
@@ -51,6 +234,7 @@
     position: relative;
     background: hsla(0, 0%, 100%, .3);
     overflow: hidden;
+    height: 100vh;
   }
   .content {
     display: flex;
@@ -62,7 +246,22 @@
     justify-content: center;
     width: 100%;
     height: 100%;
-    padding-bottom: 450rpx;
+    opacity: 0;
+    transform: translate3d(0, 100%, 0);
+    animation: rise 3s cubic-bezier(0.19, 1, 0.22, 1) .25s forwards;
+  }
+  @keyframes rise {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, 100%, 0);
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 1;
+      transform: translate3d(0, 450rpx, 0);
+    }
   }
   .title {
     position: absolute;
@@ -89,6 +288,17 @@
     align-items: stretch;
     position: relative;
     animation: bd-rise 2s cubic-bezier(0.23, 1, 0.32, 1) .75s forwards;
+    opacity: 0;
+  }
+  @keyframes bd-rise {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 60rpx, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
   }
   .form {
     display: flex;
@@ -124,10 +334,83 @@
     height: 11pt;
     margin: 0 5rpx;
   }
+  .select-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #f4f4f4;
+  }
   .confirm-btn {
     font-size: 13pt;
     height: 85rpx;
     line-height: 85rpx;
-    
+    color: #f4f4f4;
+    text-align: center;
+    background: #e55c5c;
+    border-radius: 5px;
+    margin: 50rpx 10%;
+  }
+  .comfirm-btn:active {
+    opacity: .8;
+  }
+  .help {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    z-index: 100;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .box {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 80%;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 50px rgba(22, 22, 22, .35);
+    transform: translate3d(0, -400rpx, 0);
+  }
+  .box-hd {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100rpx;
+    border-bottom: 1px solid #eee;
+  }
+  .box-title {
+    font-size: 13pt;
+  }
+  .box-close {
+    position: absolute;
+    right: 20rpx;
+    width: 35rpx;
+    height: 35rpx;
+    padding: 15rpx;
+  }
+  .box-bd {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 15rpx 40rpx 30rpx;
+  }
+  .help-q {
+    color: #999;
+    font-size: 11pt;
+    line-height: 200%;
+    margin-top: 5rpx;
+  }
+  .help-a {
+    text-indent: 1em;
+    line-height: 160%;
+    display: flex;
+    flex-direction: column;
+  }
+  .help-a text {
+    word-break: break-all;
   }
 </style>
