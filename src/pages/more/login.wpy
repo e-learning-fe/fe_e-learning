@@ -2,6 +2,18 @@
   <view class="container">
     <image class="title" src="../../images/more/title.png"></image>
     <view class="content">
+      <view class="bd">
+        <view class="form">
+          <view class="input-group">
+            <image class="input-label" src="../../images/more/user_icon.png"></image>
+            <input type="number" cursor-spacing="30" id="userid" maxlength="10" placeholder="请输入10位学号" placeholder-style="color: #fff; font-size: 10pt;" />
+          </view>
+          <view class="input-group">
+            <image class="input-label" src="../../images/more/password_icon.png"></image>
+            <input type="password" cursor-spacing="30" id="password" placeholder="初始密码为身份证后6位" placeholder-style="color: #fff; font-size: 10pt;"/>
+          </view>
+        </view>
+      </view>
     </view>
   </view>
 </template>
@@ -77,7 +89,6 @@
     align-items: stretch;
     position: relative;
     animation: bd-rise 2s cubic-bezier(0.23, 1, 0.32, 1) .75s forwards;
-    opacity: 0;
   }
   .form {
     display: flex;
@@ -85,18 +96,38 @@
     flex-direction: column;
     align-items: stretch;
     justify-content: center;
+    padding-top: 500rpx;
   }
   .input-group {
     display: flex;
     align-items: center;
-    margin: 40rpx 3%;
+    margin: 40rpx 10%;
     padding: 25rpx 10rpx;
-    border-bottom: 2px solid #f4f4f4;
-    opacity: 0;
+    border-bottom: 1px solid #f4f4f4;
+    color: #f4f4f4;
   }
   .input-label {
-    width: 25rpx;
-    height: 25rpx;
+    width: 50rpx;
+    height: 50rpx;
     padding: 0 25rpx;
+  }
+  .login-help {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 30rpx;
+    font-size: 10pt;
+    color: #bbb;
+  }
+  .login-help-img {
+    width: 11pt;
+    height: 11pt;
+    margin: 0 5rpx;
+  }
+  .confirm-btn {
+    font-size: 13pt;
+    height: 85rpx;
+    line-height: 85rpx;
+    
   }
 </style>
