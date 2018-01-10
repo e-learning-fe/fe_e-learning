@@ -113,7 +113,7 @@
         apis.cache[i] = wepy.getStorageSync(i)
       });
       console.log(apis)
-      console.log(apis.cache)
+      // console.log(apis.cache)
     }
   }
 </script>

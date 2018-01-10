@@ -20,7 +20,7 @@ const configs = {
       userinfoRaw = await _this.getUserInfo()
       await _this.saveCache('userinfo', userinfoRaw.userInfo)
       // console.log(apis.cache)
-      apis._user.wx = userinfoRaw.userInfo
+      
       if(!userinfoRaw.encryptedData || !userinfoRaw.iv){
         apis.g_status = '无关联AppID';
         return;
@@ -38,10 +38,12 @@ const configs = {
           iv: userinfoRaw.iv
         }
       })
-      // console.log(userinfo.data.data)
+      console.log(userinfo.data.data)
       _this.saveCache('_session', userinfo.data.data.session)
       // console.log(userinfo.data.data.is_bind)
-      apis._user.is_bind = userinfo.data.data.is_bind
+      apis._user = userinfo.data.data
+      apis._user.wx = userinfoRaw.userInfo
+      // apis._user.is_bind = userinfo.data.data.is_bind
       // console.log(wepy.getStorageInfoSync('_session'))
       // console.log(userinfo.data)
       if(apis.cache.version !== apis.version || apis.cache.userdata !== userinfo.data){
@@ -94,6 +96,15 @@ const configs = {
       content: content || '未知错误',
       showCancel: false
     })
+  },
+
+  showLoadToast(title, duration){
+    wepy.showToast({
+      title: title || '加载中',
+      icon: 'loading',
+      mask: true,
+      duration: duration || 10000
+    });
   }
 
 }
