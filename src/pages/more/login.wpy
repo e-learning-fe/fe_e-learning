@@ -1,7 +1,7 @@
 <template>
   <view class="container">
     <view class="remind-box" wx:if="{{remind}}">
-      <image class="remind-img" src="../../images/index/loading.gif"></image>
+      <image class="remind-img" src="../../images/index/loading.gif" style="width: 100%;height:100%; z-index: 999;"></image>
     </view>
     <block wx:else>
       <image class="title" src="../../images/more/title.png"></image>
@@ -14,9 +14,9 @@
             </view>
             <view class="input-group">
               <image class="input-label" src="../../images/more/password_icon.png"></image>
-              <input type="password" cursor-spacing="30" id="password" placeholder="初始密码为身份证后6位" placeholder-style="color: #f4f4f4; font-size: 10pt;" bindinput="useridInput" bindfocus="inputFocus" bindblur="inputBlur" />
+              <input type="password" cursor-spacing="30" id="password" placeholder="初始密码为身份证后6位" placeholder-style="color: #f4f4f4; font-size: 10pt;" bindinput="passwordInput" bindfocus="inputFocus" bindblur="inputBlur" />
             </view>
-            <view class="login-help" @tap="showHelp">
+            <view class="login-help" bindtap="showHelp">
               <text>帮助</text>
               <image class="login-help-img" src="../../images/more/help.png"></image>
             </view>
@@ -28,15 +28,16 @@
               </radio-group>
             </view>
           </form>
-          <view class="confirm-btn" @tap="bind">
+          <view class="confirm-btn" bindtap="bind">
             <text>确认绑定</text>
           </view>
         </view>
-        <view class="help" id="help" wx:if="{{help_status}}" @tap="tapHelp">
+
+        <view class="help" id="help" wx:if="{{help_status}}" bindtap="tapHelp">
           <view class="box">
             <view class="box-hd">
               <text class="box-title">帮助</text>
-              <image class="box-close" src="../../images/more/close.png"></image>
+              <image class="box-close" src="../../images/more/close.png" bindtap="hideHelp"></image>
             </view>
             <view class="box-bd">
               <view class="help-q">1、账号和密码是什么？</view>
@@ -90,10 +91,9 @@
       setTimeout(async() => {
         await this.setData({
           remind: ''
-        });
+        })
+        this.remind = ''
       }, 1000);
-      let _this = this
-      console.log(apis.g_status)
     }
     async bind() {
       let _this = this;
@@ -107,7 +107,7 @@
       // }
       await configs.showLoadToast('绑定中');
       bindInfo = await wepy.request({
-        url: `${apis._server}/BindServlet`,
+        url: `${apis._server}/bindUserInfo`,
         method: 'POST',
         header: {
           'content-type': 'application/x-www-form-urlencoded'
@@ -120,7 +120,7 @@
           types: _this.data.userType.types
         }
       })
-      console.log(bindInfo)
+      console.log(bindInfo.data)
       // .then((res) => {
       //   if (res.data && res.data.status >= 200 && res.data.status < 400) {
       //     apis.showLoadToast('请稍后');
@@ -165,35 +165,28 @@
       // });
     }
     useridInput(e) {
-      this.setData({
-        userid: e.detail.value
-      });
+      this.userid = e.detail.value;
+      if(e.detail.value.length >= 10){
+        wepy.hideKeyboard();
+      }
+      console.log('用户名:'+e.detail.value)
     }
     passwordInput(e) {
-      this.setData({
-        password: e.detail.value
-      });
+      this.password = e.detail.value;
+      console.log('密码:'+e.detail.value)
     }
     inputFocus(e) {
       if (e.target.id == 'userid') {
-        this.setData({
-          userid_focus: true
-        });
+        this.userid_focus = true;
       } else if (e.target.id == 'password') {
-        this.setData({
-          password_focus: true
-        });
+        this.password_focus = true;
       }
     }
     inputBlur(e) {
       if (e.target.id == 'userid') {
-        this.setData({
-          userid_focus: false
-        });
+        this.userid_focus = false;
       } else if (e.target.id == 'password') {
-        this.setData({
-          password_focus: false
-        });
+        this.password_focus = false;
       }
     }
     tapHelp(e) {
@@ -202,14 +195,13 @@
       }
     }
     showHelp(e) {
-      this.setData({
-        help_status: true
-      });
+      this.help_status = true;
     }
     hideHelp(e) {
-      this.setData({
-        help_status: false
-      });
+      this.help_status = false
+    }
+    radioChange(e) {
+      console.log('radio发生change事件，携带value值为：', e.detail.value)
     }
   }
 </script>
