@@ -10,7 +10,7 @@
 <script>
   import wepy from 'wepy'
   import apis from '../../config/apis.js'
-  export default {
+  export default class Append extends wepy.page{
     config = {
       // append.json
       
@@ -19,7 +19,7 @@
 </script>
 
 <style lang="less">
-  @import './login.wxss';
+ 
   .append-title {
     position: absolute;
     top: 75rpx;
