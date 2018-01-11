@@ -1,7 +1,7 @@
 <template>
   <view class="container">
     <view class="remind-box" wx:if="{{remind}}">
-      <image class="remind-img" src="../../images/index/loading.gif" style="width: 100%;height:100%; z-index: 999;"></image>
+      <image class="remind-img" src="../../images/index/loading.gif"></image>
     </view>
     <block wx:else>
       <image class="title" src="../../images/more/title.png"></image>
@@ -97,17 +97,19 @@
     }
     async bind() {
       let _this = this;
-      // if (apis.g_status) {
-      //   configs.showErrorModal(apis.g_status, '绑定失败');
-      //   return;
-      // }
-      // if (!_this.data.userid || !_this.data.password) {
-      //   configs.showErrorModal('账号密码不能位空', '提醒');
-      //   return false;
-      // }
+      let bindInfo = {}
+      if (apis.g_status) {
+        configs.showErrorModal(apis.g_status, '绑定失败');
+        return;
+      }
+      if (!_this.data.userid || !_this.data.password) {
+        configs.showErrorModal('账号密码不能位空', '提醒');
+        return false;
+      }
       await configs.showLoadToast('绑定中');
+      console.log("openid"+apis._user.openid+"\nuserid:"+this.userid+"\npassword"+this.password+"\ntypes"+this.userType.types)
       bindInfo = await wepy.request({
-        url: `${apis._server}/bindUserInfo`,
+        url: `${apis._server}/learningsystem/WeChat/bindUserInfo`,
         method: 'POST',
         header: {
           'content-type': 'application/x-www-form-urlencoded'
@@ -115,12 +117,13 @@
         dataType: 'json',
         data: {
           openid: apis._user.openid,
-          userid: _this.data.userid,
-          password: _this.data.password,
-          types: _this.data.userType.types
+          userid: this.userid,
+          password: this.password,
+          types: this.types
         }
       })
-      console.log(bindInfo.data)
+      // await apis.showLoadToast('请稍后')
+      console.log(bindInfo)
       // .then((res) => {
       //   if (res.data && res.data.status >= 200 && res.data.status < 400) {
       //     apis.showLoadToast('请稍后');
@@ -201,6 +204,8 @@
       this.help_status = false
     }
     radioChange(e) {
+      this.types = e.detail.value
+      console.log(this.types)
       console.log('radio发生change事件，携带value值为：', e.detail.value)
     }
   }
@@ -274,6 +279,14 @@
       opacity: .95;
     }
   }
+  .remind-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+    height: 50%; 
+    z-index: 999;
+  }
   .bd {
     display: flex;
     flex: 1;
@@ -298,7 +311,6 @@
     flex: 1;
     flex-direction: column;
     align-items: stretch;
-    justify-content: center;
     padding-top: 500rpx;
   }
   .input-group {
