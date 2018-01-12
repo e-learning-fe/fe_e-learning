@@ -1,58 +1,71 @@
 <template>
   <view class="container">
     <!-- 顶部 -->
-    <view class="main-core">
-      <block wx:for="{{core}}" wx:key="index">
-        <navigatior class="main-core-item">
-          <image src="/images/core/{{item.id}}.png" class="core-item-icon"></image>
-          <text class="core-item-name disable">{{item.name}}</text>
-        </navigatior>
-      </block>
-    </view>
-    <!-- 教师消息 -->
-    <view class="tech-news">
-      <!-- 消息顶部 -->
-      <view class="tech-news-top">
-        <image src="/images/core/notice@active.png" class="notice-icon"></image>
-        <text class="tech-news-header">教师消息</text>
+    <block wx:if="{{!remind}}">
+      <view class="main-core">
+        <block wx:for="{{core}}" wx:key="index">
+          <navigatior class="main-core-item">
+            <image src="/images/core/{{item.id}}.png" class="core-item-icon"></image>
+            <text class="core-item-name disable">{{item.name}}</text>
+          </navigatior>
+        </block>
       </view>
-      <!-- 消息内容 -->
-      <view class="tech-news-container">
-        <text style="font-size: 12pt;">{{tech.name}}老师:
-                                              </text>
-        <text style="margin-right: 20rpx;float: right;">{{tech.date}}</text>
-        <view class="tech-news-content">
-          {{tech.content}}
+      <text style="position: absolute; top:50%;left: 50%; transform: translate(-50%);-webkit-transform: translate(-50%)">请先绑定</text>
+    </block>
+    <block wx:else>
+      <view class="main-core">
+        <block wx:for="{{core}}" wx:key="index">
+          <navigatior class="main-core-item">
+            <image src="/images/core/{{item.id}}@active.png" class="core-item-icon"></image>
+            <text class="core-item-name">{{item.name}}</text>
+          </navigatior>
+        </block>
+      </view>
+      <!-- 教师消息 -->
+      <view class="tech-news" bindtap="test">
+        <!-- 消息顶部 -->
+        <view class="tech-news-top">
+          <image src="/images/core/notice@active.png" class="notice-icon"></image>
+          <text class="tech-news-header">教师消息</text>
         </view>
-      </view>
-      <!-- 分割线 -->
-      <view class="line"></view>
-      <!-- 底部 -->
-      <view class="tech-news-more">查看更多</view>
-    </view>
-    <!-- 当前课时 -->
-    <view class="cur-course">
-      <view class="cur-course-top">
-        <image src="/images/core/video@active.png" class="notice-icon"></image>
-        <text class="cur-course-header">当前课程</text>
-      </view>
-      <view class="cur-course-container">
-        <text style="font-size: 12pt;">{{course.name}}</text>
-      </view>
-      <view class="cur-course-content">
-        <view class="cur-course-left">
-          <image src="{{course.imgSrc}}"></image>
+        <!-- 消息内容 -->
+        <view class="tech-news-container">
+          <text style="font-size: 12pt;">{{tech.name}}老师:
+                                                        </text>
+          <text style="margin-right: 20rpx;float: right;">{{tech.date}}</text>
+          <view class="tech-news-content">
+            {{tech.content}}
+          </view>
         </view>
-        <view class="cur-course-right">
-          <text style="margin-left: 10rpx;font-size: 15pt;font-weight:bold;">div+css的使用</text>
-          <view class="cur-course-detail">{{course.content}}</view>
-        </view>
+        <!-- 分割线 -->
+        <view class="line"></view>
+        <!-- 底部 -->
+        <view class="tech-news-more">查看更多</view>
       </view>
-      <!-- 分割线 -->
-      <view class="line"></view>
-      <!-- 底部 -->
-      <view class="cur-course-more">{{user}}查看更多</view>
-    </view>
+      <!-- 当前课时 -->
+      <view class="cur-course">
+        <view class="cur-course-top">
+          <image src="/images/core/video@active.png" class="notice-icon"></image>
+          <text class="cur-course-header">当前课程</text>
+        </view>
+        <view class="cur-course-container">
+          <text style="font-size: 12pt;">{{course.name}}</text>
+        </view>
+        <view class="cur-course-content">
+          <view class="cur-course-left">
+            <image src="{{course.imgSrc}}"></image>
+          </view>
+          <view class="cur-course-right">
+            <text style="margin-left: 10rpx;font-size: 15pt;font-weight:bold;">div+css的使用</text>
+            <view class="cur-course-detail">{{course.content}}</view>
+          </view>
+        </view>
+        <!-- 分割线 -->
+        <view class="line"></view>
+        <!-- 底部 -->
+        <view class="cur-course-more">{{user}}查看更多</view>
+      </view>
+    </block>
   </view>
 </template>
 
@@ -65,6 +78,8 @@
       navigationBarTitleText: '网上学习平台'
     }
     data = {
+      offline: false,
+      remind: '',
       core: [{
         id: 'video',
         name: '在线视频'
@@ -86,12 +101,16 @@
         content: 'loremsldfjsldkfjlwkejrflkjfdlsk'
       }
     }
-
     async onLoad() {
       try {
         await configs.getUser()
         // console.log(apis._user.is_bind)
-        
+        // console.log('绑定' + this.remind)
+        // console.log(this.data)
+        if (apis._user.is_bind) {
+          this.remind = apis._user.is_bind
+          this.$apply()
+        }
       } catch (e) {
         wepy.showModal({
           title: '提示',
@@ -99,6 +118,19 @@
         })
       }
       // console.log(configs.getUser())
+    }
+    async onShow() {
+      if (this.offline) {
+        await configs.getUser()
+        return false
+      }
+      if (apis._user.is_bind) {
+        this.remind = apis._user.is_bind
+        this.$apply()
+      }
+    }
+    test() {
+      console.log(this.is_bind)
     }
   }
 </script>
