@@ -1,0 +1,162 @@
+<template>
+  <view class="container">
+    <!-- 课程分类 -->
+    <scroll-view class="filter" scroll-x="true">
+      <block wx:for="{{list}}" wx:key="{{lessonId}}">
+         
+      </block>
+    </scroll-view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class Bbs extends wepy.page {
+    config = {
+
+    }
+
+    data = {
+      list: [
+        {lessonId: 'all', name: '全部'},
+        {lessonId: '001', name: '网页设计与制作'},
+        {lessonId: '002', name: '数据结构'},
+        {lessonId: '003', name: 'JAVA'}
+      ]
+    }
+
+    onLoad () {
+      this.getSubjectsList()
+    }
+
+    /* 根据后台传过来的JSON数组获取课程的编号，自动生成相应的id和区域按钮，
+       id为前端自增长，用来确定对应按钮的位置，
+       lessonId(课程编号)为后端传递过来的值，用来确定需要显示的相关内容 */
+    getSubjectsList() {
+      for(let i = 0; i < this.list.length; i++) {
+        if(i < 10) {
+          this.list[i].id = '0'+i
+        } else {
+          this.list[i].id = i          
+        }
+      }
+    }
+  }
+</script>
+
+<style lang="less">
+  .container {
+    background-color: #fff;
+    padding-bottom: 20rpx;
+  }
+  .filter {
+    position: fixed;
+    z-index: 1;
+    width: 100%;
+    height: 180rpx;
+    white-space: nowrap;
+    background: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 1)), color-stop(0.93, rgba(255, 255, 255, .93)), to(rgba(255, 255, 255, 0)));
+  }
+  .filter-item {
+    width: 140rpx;
+    height: 140rpx;
+    margin: 20rpx;
+    margin-left: 0;
+    border-radius: 5rpx;
+    box-shadow: 1px 2px 3px #e5e5e5;
+    opacity: .66;
+  }
+  .filter-item#all {
+    margin-left: 20rpx;
+  }
+  .filter-item.active {
+    opacity: 1;
+    transform: scale(1.08, 1.08);
+    box-shadow: 1px 2px 3px #ddd;
+  }
+  .loader {
+    display: inline-block;
+    width: 100%;
+    height: 180rpx;
+    line-height: 180rpx;
+    margin-top: -180rpx;
+    letter-spacing: 10rpx;
+    text-align: center;
+    box-sizing: border-box;
+    padding-top: 40rpx;
+  }
+  .loader image {
+    height: 80rpx;
+    width: 80rpx;
+  }
+  .content {
+    display: flex;
+    flex-direction: column;
+    padding: 180rpx 20rpx 0;
+  }
+  .content-ending {
+    width: 100%;
+    color: #bbb;
+    text-align: center;
+    margin: 30rpx auto;
+  }
+  .list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 130rpx;
+    margin-bottom: 20rpx;
+    border-radius: 3px;
+    box-shadow: 1px 2px 3px #ddd;
+    padding: 0 30rpx;
+    color: #fff;
+  }
+  .list-item.all {
+    background-color: #9f8bea;
+  }
+  .list-item.xy {
+    background-color: #73b4ef;
+  }
+  .list-item.xb {
+    background-color: #78c9a2;
+  }
+  .list-item.tz {
+    background-color: #79d0a6;
+  }
+  .list-item.tb {
+    background-color: #c895ed;
+  }
+  .list-item.new {
+    background-color: #7acfa6;
+  }
+  .list-item.st {
+    background-color: #e994b5;
+  }
+  .list-item-left {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding-right: 10rpx;
+  }
+  .list-item-title {
+    font-size: 13pt;
+    line-height: 175%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 100%;
+    overflow: hidden;
+  }
+  .list-item-time {
+    font-size: 10pt;
+    line-height: 125%;
+    opacity: 0.8;
+  }
+  .list-item-icon {
+    flex: 0 0 60rpx;
+    height: 60rpx;
+    width: 60rpx;
+    border-left: 1px solid #fff;
+    padding-left: 25rpx;
+  }
+</style>

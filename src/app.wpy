@@ -63,6 +63,7 @@
         'pages/classinfo/classinfo',
         'pages/more/more',
         'pages/more/login',
+        'pages/core/bbs/bbs'
       ],
       window: {
         backgroundTextStyle: 'light',

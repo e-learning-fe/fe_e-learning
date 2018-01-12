@@ -3,10 +3,10 @@
     <!-- 顶部 -->
     <view class="main-core">
       <block wx:for="{{core}}" wx:key="index">
-        <navigatior class="main-core-item">
+        <navigator class="main-core-item" url="../core/bbs/bbs">
           <image src="/images/core/{{item.id}}.png" class="core-item-icon"></image>
           <text class="core-item-name disable">{{item.name}}</text>
-        </navigatior>
+        </navigator>
       </block>
     </view>
     <!-- 教师消息 -->
@@ -87,19 +87,19 @@
       }
     }
 
-    async onLoad() {
-      try {
-        await configs.getUser()
-        // console.log(apis._user.is_bind)
+    // async onLoad() {
+    //   try {
+    //     await configs.getUser()
+    //     // console.log(apis._user.is_bind)
         
-      } catch (e) {
-        wepy.showModal({
-          title: '提示',
-          content: `用户登录失败`
-        })
-      }
-      // console.log(configs.getUser())
-    }
+    //   } catch (e) {
+    //     wepy.showModal({
+    //       title: '提示',
+    //       content: `用户登录失败`
+    //     })
+    //   }
+    //   // console.log(configs.getUser())
+    // }
   }
 </script>
 
