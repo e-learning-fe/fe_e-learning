@@ -8,11 +8,12 @@
       <view class="content">
         <view class="bd">
           <form class="login-form">
-            <view class="input-group">
+      
+            <view class="input-group {{userid_focus ? 'active' : ''}}">
               <image class="input-label" src="../../images/more/user_icon.png"></image>
               <input type="number" cursor-spacing="30" id="userid" maxlength="10" placeholder="请输入10位学号" placeholder-style="color: #f4f4f4; font-size: 10pt;" bindinput="useridInput" bindfocus="inputFocus" bindblur="inputBlur" />
             </view>
-            <view class="input-group">
+            <view class="input-group {{password_focus ? 'active' : ''}}">
               <image class="input-label" src="../../images/more/password_icon.png"></image>
               <input type="password" cursor-spacing="30" id="password" placeholder="初始密码为身份证后6位" placeholder-style="color: #f4f4f4; font-size: 10pt;" bindinput="passwordInput" bindfocus="inputFocus" bindblur="inputBlur" />
             </view>
@@ -100,7 +101,6 @@
       }, 1000);
     }
     async bind() {
-      let _this = this;
       let bindInfo = {}
       if (apis.g_status) {
         configs.showErrorModal(apis.g_status, '绑定失败');
@@ -205,6 +205,8 @@
     inputFocus(e) {
       if (e.target.id == 'userid') {
         this.userid_focus = true;
+        this.$apply()
+        console.log(this.userid_focus)
         console.log(this.remind)
       } else if (e.target.id == 'password') {
         this.password_focus = true;
@@ -346,6 +348,9 @@
     padding: 25rpx 10rpx;
     border-bottom: 1px solid #f4f4f4;
     color: #f4f4f4;
+  }
+  .input-group.active {
+    border: 2px solid #0099ff;
   }
   .input-label {
     width: 50rpx;
