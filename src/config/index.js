@@ -38,6 +38,7 @@ const configs = {
           iv: userinfoRaw.iv
         }
       })
+      wepy.hideNavigationBarLoading()
       console.log(userinfo.data.data)
       _this.saveCache('_session', userinfo.data.data.session)
       // console.log(userinfo.data.data.is_bind)
@@ -52,10 +53,11 @@ const configs = {
         // console.log(apis)
         // console.log(util.decode('Q02YfV4sAhaKlIXGdQvPBw=='))
         // _this.processData(userinfo.data);
-        status = true;
+        // status = true;
       }
-      
+      console.log('hehe'+apis._user.is_bind)
       if(!apis._user.is_bind){
+        console.log('usb')
         wepy.navigateTo({
           url: '/pages/more/login'
         })

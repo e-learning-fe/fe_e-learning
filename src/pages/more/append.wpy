@@ -13,7 +13,7 @@
   export default class Append extends wepy.page{
     config = {
       // append.json
-      
+      navigationBarTitleText: '完善信息'
     }
   }
 </script>
