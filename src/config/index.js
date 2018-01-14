@@ -40,10 +40,12 @@ const configs = {
       })
       wepy.hideNavigationBarLoading()
       console.log(userinfo.data.data)
+
       _this.saveCache('_session', userinfo.data.data.session)
       // console.log(userinfo.data.data.is_bind)
       apis._user = userinfo.data.data
       apis._user.wx = userinfoRaw.userInfo
+      apis._time = userinfo.data.data.time
       // apis._user.is_bind = userinfo.data.data.is_bind
       // console.log(wepy.getStorageInfoSync('_session'))
       // console.log(userinfo.data)

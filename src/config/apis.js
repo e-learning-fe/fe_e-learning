@@ -6,7 +6,10 @@ const apis = {
     //微信数据
     wx: {},
     //学生\老师数据
-    we: {}
+    we: {
+      stuInfo: {},
+      subjectList: {}
+    }
   },
   cache: {},
   key (data) {

@@ -120,18 +120,16 @@
       // console.log(configs.getUser())
     }
     async onShow() {
-      if (this.offline) {
-        await configs.getUser()
-        return false
-      }
+      // if (this.offline) {
+      //   await configs.getUser()
+      //   return false
+      // }
       if (apis._user.is_bind) {
         this.remind = apis._user.is_bind
         this.$apply()
       }
     }
-    test() {
-      console.log(this.is_bind)
-    }
+    
   }
 </script>
 

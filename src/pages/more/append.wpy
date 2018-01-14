@@ -9,26 +9,19 @@
           <form class="append-form">
             <view class="input-group {{email_focus ? 'active' : ''}}">
               <text class="input-label">邮箱:</text>
-              <input type="number" cursor-spacing="30" id="email" placeholder="请输入邮箱" bindinput="emailInput" bindfocus="inputFocus" bindblur="inputBlur" />
+              <input type="email" cursor-spacing="30" id="email" placeholder="请输入邮箱" bindinput="emailInput" bindfocus="inputFocus" bindblur="inputBlur" />
             </view>
             <view class="input-group {{phone_focus ? 'active' : ''}}">
               <text class="input-label">手机:</text>
-              <input password="true" cursor-spacing="30" id="phone" placeholder="请输入手机号码" bindinput="phoneInput" bindfocus="inputFocus" bindblur="inputBlur" />
+              <input type="number" cursor-spacing="30" id="phone" placeholder="请输入手机号码" bindinput="phoneInput" bindfocus="inputFocus" bindblur="inputBlur" />
             </view>
             <view class="input-group {{qq_focus ? 'active' : ''}}">
               <text class="input-label">QQ:</text>
-              <input password="true" cursor-spacing="30" id="qq" placeholder="请输入qq" bindinput="qqInput" bindfocus="inputFocus" bindblur="inputBlur" />
+              <input type="number" cursor-spacing="30" id="qq" placeholder="请输入qq" bindinput="qqInput" bindfocus="inputFocus" bindblur="inputBlur" />
             </view>
             <view class="input-group {{we_focus ? 'active' : ''}}">
               <text class="input-label">微信号:</text>
-              <input password="true" cursor-spacing="30" id="we" placeholder="请输入微信号" bindinput="weInput" bindfocus="inputFocus" bindblur="inputBlur" />
-            </view>
-            <view class="select-box">
-              <radio-group class="radio-group" bindchange="radioChange">
-                <label class="radio select-btn" wx:for="{{userType}}" wx:key="{{userType}}">
-                                  <radio id="types" value="{{item.types}}" checked="{{item.checked}}"/>{{item.value}}
-                                </label>
-              </radio-group>
+              <input type="text" cursor-spacing="30" id="we" placeholder="请输入微信号" bindinput="weInput" bindfocus="inputFocus" bindblur="inputBlur" />
             </view>
             <view class="confirm-btn" bindtap="append">
             <text>完善信息</text>
@@ -60,16 +53,7 @@
       qq: '',
       we: '',
       types: 'student',
-      userType: [{
-          types: 'teacher',
-          value: '教师'
-        },
-        {
-          types: 'student',
-          value: '学生',
-          checked: 'true'
-        }
-      ]
+      
     }
     onReady() {
       setTimeout(async() => {
@@ -82,12 +66,12 @@
       }, 1000);
     }
     async append() {
-      let appenInfo = {}
+      let appendInfo = {}
       if (apis.g_status) {
         configs.showErrorModal(apis.g_status, '绑定失败');
         return;
       }
-      if (!this.email || !this.phone || !this.phone || !this.qq || !this.wechat || !this.types) {
+      if (!this.email ||  !this.phone || !this.qq || !this.we || !this.types) {
         configs.showErrorModal('信息不能为空', '提醒');
         return false;
       }
@@ -101,12 +85,13 @@
         data: {
           openid: apis._user.openid,
           email: this.email,
-          phoner: this.phone,
+          phone: this.phone,
           qq: this.qq,
           wechat: this.wechat,
           types: this.types
         }
       })
+      console.log(appendInfo)
     }
     inputFocus(e) {
       let id = e.target.id
@@ -134,11 +119,7 @@
       this.we = e.detail.value
       console.log(this.we)
     }
-    radioChange(e) {
-      this.types = e.detail.value
-      console.log(this.types)
-      console.log('radio发生change事件，携带value值为：', e.detail.value)
-    }
+   
   }
 </script>
 
@@ -187,15 +168,6 @@
   .append-form .input-group picker {
     font-size: 11pt;
     padding: 0 20rpx;
-  }
-   .select-box {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #000;
-  }
-  .select-btn {
-    padding-left: 0 50rpx;
   }
   .confirm-btn {
     font-size: 13pt;
