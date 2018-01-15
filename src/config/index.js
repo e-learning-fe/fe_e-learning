@@ -41,11 +41,27 @@ const configs = {
       wepy.hideNavigationBarLoading()
       console.log(userinfo.data.data)
 
-      _this.saveCache('_session', userinfo.data.data.session)
+      // _this.saveCache('_session', userinfo.data.data.session)
       // console.log(userinfo.data.data.is_bind)
+
+      // 将信息储存到apis里面
+
+      // 用户基本信息 + 后台获取的数据
       apis._user = userinfo.data.data
+
+      // 本地用户信息
       apis._user.wx = userinfoRaw.userInfo
+
+      // 当前周数
       apis._time = userinfo.data.data.time
+      // apis._user.wx.stuInfo = userinfo.data.data.stuInfo
+
+      // 获取自己的绑定后的真实信息
+      let uid = userinfo.data.data.openid
+      if (apis._user.is_bind) {
+        apis._user.myInfo = userinfo.data.data.stuInfo.filter((item, index, array)=>{return uid === item.tgOpenid})[0]
+      }
+
       // apis._user.is_bind = userinfo.data.data.is_bind
       // console.log(wepy.getStorageInfoSync('_session'))
       // console.log(userinfo.data)

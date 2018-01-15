@@ -7,9 +7,9 @@ const apis = {
     wx: {},
     //学生\老师数据
     we: {
-      stuInfo: {},
       subjectList: {}
-    }
+    },
+    myInfo: {}
   },
   cache: {},
   key (data) {
