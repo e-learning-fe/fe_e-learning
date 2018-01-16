@@ -126,7 +126,7 @@
       })
       // await apis.showLoadToast('请稍后')
       console.log(bindInfo)
-      let status = bindInfo.data.stutas
+      let status = bindInfo.data.status
       if(status >=200 && status < 400) {
         configs.showLoadToast('请稍后')
         apis.cache = {}

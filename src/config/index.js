@@ -63,15 +63,12 @@ const configs = {
       }
 
       // apis._user.is_bind = userinfo.data.data.is_bind
-      // console.log(wepy.getStorageInfoSync('_session'))
       // console.log(userinfo.data)
       if(apis.cache.version !== apis.version || apis.cache.userdata !== userinfo.data){
         _this.saveCache('version', apis.version);
         _this.saveCache('userdata', userinfo.data);
         // console.log(apis)
-        // console.log(util.decode('Q02YfV4sAhaKlIXGdQvPBw=='))
         // _this.processData(userinfo.data);
-        // status = true;
       }
       console.log('hehe'+apis._user.is_bind)
       if(!apis._user.is_bind){
@@ -88,10 +85,7 @@ const configs = {
       }
     }
   },
-  // processData(key) {
-  //   let data = 1;
-  //   console.log(data)
-  // },
+
   //保存缓存
   saveCache(key, value) {
     if(!key || !value){return;}

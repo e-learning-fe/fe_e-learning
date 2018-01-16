@@ -94,16 +94,24 @@
         header: {
           'content-type': 'application/x-www-form-urlencoded'
         },
-        dataType: 'json',
         data: {
           openid: apis._user.openid,
           email: this.email,
           phone: this.phone,
           qq: this.qq,
-          wechat: this.wechat,
+          wechat: this.we,
           types: this.types
         }
       })
+
+      let status = appendInfo.data.status
+      if(status>=200 || status < 400) {
+        wepy.showToast({
+          title: '成功完善信息',
+          icon: 'success',
+          duration: 1500
+        })
+      }
       console.log(appendInfo)
     }
     inputFocus(e) {
