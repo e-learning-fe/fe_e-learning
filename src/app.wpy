@@ -63,7 +63,8 @@
         'pages/classinfo/classinfo',
         'pages/more/more',
         'pages/more/login',
-        "pages/more/append"
+        "pages/more/append",
+        "pages/more/issue"
       ],
       window: {
         backgroundTextStyle: 'light',
@@ -79,6 +80,12 @@
         list: [{
             pagePath: 'pages/index/index',
             text: '首页',
+            iconPath: 'images/index/index.png',
+            selectedIconPath: 'images/index/index@active.png'
+          },
+          {
+            pagePath: 'pages/more/issue',
+            text: '反馈',
             iconPath: 'images/index/index.png',
             selectedIconPath: 'images/index/index@active.png'
           },
