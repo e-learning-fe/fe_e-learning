@@ -141,17 +141,17 @@
     onShow() {
       // this.getData();
     }
-    getData() {
-      let _this = this;
-      let days = ['一', '二', '三', '四', '五', '六', '日'];
-      _this.setData({
-        'time': {
-          'week': '19',
-          'day': days[1 - 1]
-        },
-        'is_bind': !!apis._user.is_bind
-      });
-    }
+    // getData() {
+    //   let _this = this;
+    //   let days = ['一', '二', '三', '四', '五', '六', '日'];
+    //   _this.setData({
+    //     'time': {
+    //       'week': '19',
+    //       'day': days[1 - 1]
+    //     },
+    //     'is_bind': !!apis._user.is_bind
+    //   });
+    // }
   }
 </script>
 

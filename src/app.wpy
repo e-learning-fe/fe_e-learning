@@ -84,12 +84,6 @@
             selectedIconPath: 'images/index/index@active.png'
           },
           {
-            pagePath: 'pages/more/issue',
-            text: '反馈',
-            iconPath: 'images/index/index.png',
-            selectedIconPath: 'images/index/index@active.png'
-          },
-          {
             pagePath: 'pages/classinfo/classinfo',
             text: '班级',
             iconPath: 'images/index/classinfo.png',

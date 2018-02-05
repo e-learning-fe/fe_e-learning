@@ -58,8 +58,8 @@
           <image src="{{item}}?imageView2/2/w/250/interlace/1/q/88" mode="aspectFill" data-index="{{index}}" bindtap="previewPhoto"></image>
         </view>
       </view>
-      <text class="issues-remind">        您的反馈将会发到广科学习平台的后台，我们在看到您的后台后会及时回复，您可以在反馈页面进行查询;另外你还可以加入用户反馈群进行反馈。
-                      注:频繁恶意反馈的用户将会取消其反馈资格。</text>
+      <text class="issues-remind"> 您的反馈将会发到广科学习平台的后台，我们在看到您的后台后会及时回复，您可以在反馈页面进行查询;另外你还可以加入用户反馈群进行反馈。 注:频繁恶意反馈的用户将会取消其反馈资格。
+      </text>
       <view class="submit-btn {{uploading?'disabled':''}}" bindtap="submit">
         <text>提交反馈</text>
       </view>
@@ -68,293 +68,429 @@
 </template>
 
 <script>
-  import wepy from "wepy";
-  export default class Issue extends wepy.page {
-    data = {
-      list: {
-        count: 1,
-        status: false
+import wepy from "wepy";
+import apis from "../../config/apis";
+import configs from "../../config";
+export default class Issue extends wepy.page {
+  data = {
+    list: {
+      count: 1,
+      status: false
+    },
+    title: "",
+    content: "",
+    info: "",
+    imgs: [],
+    imgLen: 0,
+    upload: false,
+    uploading: false,
+    qiniu: "",
+    showError: false
+  };
+  async onLoad() {
+    if (apis.g_status) {
+      return;
+    }
+    let networkType = await wepy.getNetworkType(),
+      sysInfo = {}; 
+    console.log(networkType);
+    if (networkType) {
+      sysInfo = await wepy.getSystemInfo();
+      console.log(sysInfo);
+      if (sysInfo) {
+        let info = "---\r\n**用户信息**\r\n";
+        info += "用户名：" + apis._user.wx.nickName;
+        if (apis._user.is_bind) {
+          info +=
+            "（" +
+            "-" +
+            apis._user.myInfo.stuName +
+            "-" +
+            apis._user.myInfo.stuStudentid +
+            "）";
+        }
+        info += "\r\n手机型号：" + sysInfo.model;
+        info +=
+          "（" +
+          sysInfo.platform +
+          " - " +
+          sysInfo.windowWidth +
+          "x" +
+          sysInfo.windowHeight +
+          "）";
+        info += "\r\n微信版本号：" + sysInfo.version;
+        info += "\r\n小程序版本号：" + apis.version;
+        info += "\r\n基础库版本：" + sysInfo.SDKVersion;
+        info += "\r\n网络类型：" + networkType.networkType;
+        // console.log(info);
+        this.info = info;
+        this.$apply();
+        // console.log(this.info);
       }
     }
-    openList() {
-      if (this.list.count) {
-        this.list.status = !this.list.status
-        this.$apply()
-      }
-    }
-    choosePhoto() {
-      wepy.showModal({
-        title: '提示',
-        content: '上传图片需要消耗流量，是否继续？',
-        confirmText: '继续'
-      })
-    }
-    submit () {
-      wepy.showModal({
-        title: '提示',
-        content: '是否确认提交反馈?'
-      })
+    wepy.showNavigationBarLoading();
+    token = await wepy.request({
+      url: `${apis._server}/qiniu/getUploadToken`,
+      method: "POST",
+      data: apis._user.openid,
+    })
+    console.log(token)
+  }
+  openList() {
+    if (this.list.count) {
+      this.list.status = !this.list.status;
+      this.$apply();
     }
   }
+  async choosePhoto() {
+    let chooseConfirm = {},
+      chooseImg = {};
+    chooseConfirm = await wepy.showModal({
+      title: "提示",
+      content: "上传图片需要消耗流量，是否继续？",
+      confirmText: "继续"
+    });
+    if (chooseConfirm.confirm) {
+      // console.log(chooseConfirm.confirm);
+      chooseImg = await wepy.chooseImage({
+        count: 4,
+        sourceType: ["album"]
+      });
+      // console.log(chooseImg)
+      if (chooseImg) {
+        let tempFilePaths = chooseImg.tempFilePaths,
+          imgLen = tempFilePaths.length;
+        this.uploading = true;
+        this.imgLen = this.imgLen + imgLen;
+        // console.log(tempFilePaths)
+        tempFilePaths.forEach(function(e) {
+          // this.uploadImg(e);
+          console.log(e)
+        });
+      }
+    }
+  }
+  uploadImg(path) {
+    if(apis.g_status){
+      apis.showErrorModal(apis.g_status, '上传失败');
+      return;
+    }
+
+  }
+  listenerTitle(e) {
+    this.title = e.detail.value;
+    this.$apply();
+    // console.log(this.title)
+  }
+  listenerTextarea(e) {
+    this.content = e.detail.value;
+    this.$apply();
+    console.log(this.content);
+  }
+  async submit() {
+    if (!this.title || !this.content) {
+      configs.showErrorModal("标题和内容不能为空", "温馨提示");
+      return false;
+    }
+    if (!this.uploading) {
+      configs.showErrorModal("请等待图片上传完毕再提交", "温馨提示");
+      return false;
+    }
+    if(apis.g_status){
+      apis.showErrorModal(apis.g_status, '失败');
+      return;
+    }
+    let submitConfirm = {},
+      submitInfo = {};
+    submitConfirm = await wepy.showModal({
+      title: "提示",
+      content: "是否确认提交反馈?"
+    });
+
+    if (submitConfirm.confirm) {
+      // console.log(submitConfirm.confirm)
+      submitInfo = await wepy.request({
+        url: `${apis._server}/learningsystem/Issues/submitIssues`,
+        method: "POST",
+        header: {
+          "content-type": "application/x-www-form-urlencoded"
+        },
+        data: {
+          openid: apis._user.openid,
+          title: this.title,
+          body: this.content,
+          details: "",
+          img_url: ""
+        }
+      });
+      if (!submitInfo.statusCode == 200) {
+        wepy.navigateBack();
+      } else {
+        configs.showErrorModal(submitInfo.errMsg, "提交失败");
+      }
+      console.log(submitInfo);
+    }
+  }
+}
 </script>
 
 <style lang="less">
-  .container {
-    background-color: #f6f6f6;
-    padding: 0;
-    padding-top: 30rpx;
-    font-size: 11pt;
-    box-sizing: border-box;
-  }
-  .list-btn {
-    align-items: center;
-    font-size: 11pt;
-    padding: 0 30rpx 0 10px;
-    margin-bottom: 10rpx;
-    display: flex;
-    background-color: #fff;
-    min-height: 85rpx;
-    border-top: 1px solid #e5e5e5;
-    border-bottom: 1px solid #e5e5e5;
-  }
-  .list-btn:active {
-    background-color: #fcfcfc;
-  }
-  .btn-icon {
-    width: 45rpx;
-    height: 45rpx;
-    margin-right: 15rpx;
-  }
-  .btn-text {
-    flex: 1;
-    margin: 20rpx 0 15rpx;
-  }
-  .btn-open {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    margin-left: 10rpx;
-  }
-  .btn-open-img {
-    width: 30rpx;
-    height: 30rpx;
-  }
-  .issues-list {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    margin-top: 10rpx;
-  }
-  .item-labels {
-    flex: 1;
-  }
-  .item-label {
-    flex: 1;
-    background: #7acfa6;
-    color: #fff;
-    font-size: 9pt;
-    padding: 4rpx 10rpx;
-    border-radius: 3px;
-    margin: 0 5rpx;
-  }
-  .item-status {
-    font-size: 10pt;
-    color: #999;
-  }
-  .issues-item {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    background-color: #fff;
-    margin: 10rpx 30rpx;
-    font-size: 11pt;
-    padding: 15rpx 25rpx;
-    min-height: 100rpx;
-    border-radius: 3px;
-    box-shadow: 1px 2px 3px #ddd;
-  }
-  .issues-item.close {
-    flex-direction: row;
-    align-items: center;
-  }
-  .issues-item.close:active {
-    background-color: #fcfcfc;
-    opacity: 0.8;
-  }
-  .item-hd {
-    display: flex;
-    align-items: center;
-  }
-  .btn-id {
-    flex-shrink: 0;
-    color: #aaa;
-    font-size: 10pt;
-    margin-right: 10rpx;
-  }
-  .issues-item.close .btn-text {
-    flex: 1 1 auto;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    margin: 0;
-  }
-  .item-bd {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    padding: 0 10rpx 15rpx;
-    font-size: 10pt;
-  }
-  .item-content {
-    padding-bottom: 20rpx;
-  }
-  .item-comment {
-    display: flex;
-    border-top: 1rpx solid #eee;
-    padding: 10rpx 5rpx;
-  }
-  .item-comment-img {
-    flex-shrink: 0;
-    width: 50rpx;
-    height: 50rpx;
-    margin: 10rpx 20rpx 10rpx 10rpx;
-    border-radius: 3px;
-  }
-  .item-comment-bd {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .item-comment-name {
-    font-size: 9pt;
-    color: #999;
-  }
-  .issues-label {
-    font-size: 10pt;
-    line-height: 100%;
-    color: #999;
-    margin: 25rpx 20rpx 15rpx;
-  }
-  .issues-panel {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    background-color: #fff;
-    border-top: 1px solid #e5e5e5;
-    border-bottom: 1px solid #e5e5e5;
-  }
-  .issues-img-panel {
-    display: flex;
-    flex-wrap: wrap;
-    background-color: #fff;
-    border-top: 1px solid #e5e5e5;
-    border-bottom: 1px solid #e5e5e5;
-    padding: 15rpx 25rpx;
-  }
-  .issues-img-panel.error {
-    background: rgba(231, 138, 176, 0.06);
-  }
-  .issues-input {
-    border-bottom: 1px solid #e5e5e5;
-    padding: 15rpx 25rpx;
-  }
-  .issues-input.error {
-    background: rgba(231, 138, 176, 0.06);
-  }
-  .issues-textarea {
-    width: 100%;
-    padding: 25rpx;
-    min-height: 225rpx;
-    box-sizing: border-box;
-  }
-  .issues-textarea.error {
-    background: rgba(231, 138, 176, 0.06);
-  }
-  .issues-photo-item {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #888;
-    margin: 20rpx;
-    margin-right: 0;
-    width: 135rpx;
-    height: 135rpx;
-    border: 1rpx solid #e5e5e5;
-    border-radius: 5rpx;
-  }
-  .issues-photo-item:active {
-    opacity: 0.8;
-  }
-  .issues-photo-item .remind-img {
-    padding: 0;
-  }
-  .issues-photo-item image {
-    width: 100%;
-    height: 100%;
-  }
-  .add-photo:active {
-    background: #f0f0f0;
-  }
-  .add-photo::before,
-  .add-photo::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    background: #e5e5e5;
-  }
-  .add-photo:active::before,
-  .add-photo:active::after {
-    background: #ddd;
-  }
-  .add-photo::before {
-    width: 10rpx;
-    height: 80rpx;
-    margin-top: -40rpx;
-    margin-left: -5rpx;
-  }
-  .add-photo::after {
-    width: 80rpx;
-    height: 10rpx;
-    margin-top: -5rpx;
-    margin-left: -40rpx;
-  }
-  .issues-remind {
-    flex: 1;
-    font-size: 9pt;
-    line-height: 135%;
-    color: #ccc;
-    padding: 0 30rpx;
-    word-break: break-all;
-    text-indent: 1em;
-    padding-top: 30rpx;
-  }
-  .issues-remind.text-center {
-    text-align: center;
-  }
-  .submit-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 40rpx 3%;
-    height: 80rpx;
-    border-radius: 3px;
-    text-align: center;
-    background-color: #0099ff;
-    color: #fff;
-    font-size: 12pt;
-    line-height: 150%;
-    padding: 0;
-    border: none;
-  }
-  .submit-btn.disabled {
-    opacity: 0.7;
-  }
-  .submit-btn:active {
-    opacity: 0.7;
-  }
+.container {
+  background-color: #f6f6f6;
+  padding: 0;
+  padding-top: 30rpx;
+  font-size: 11pt;
+  box-sizing: border-box;
+}
+.list-btn {
+  align-items: center;
+  font-size: 11pt;
+  padding: 0 30rpx 0 10px;
+  margin-bottom: 10rpx;
+  display: flex;
+  background-color: #fff;
+  min-height: 85rpx;
+  border-top: 1px solid #e5e5e5;
+  border-bottom: 1px solid #e5e5e5;
+}
+.list-btn:active {
+  background-color: #fcfcfc;
+}
+.btn-icon {
+  width: 45rpx;
+  height: 45rpx;
+  margin-right: 15rpx;
+}
+.btn-text {
+  flex: 1;
+  margin: 20rpx 0 15rpx;
+}
+.btn-open {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-left: 10rpx;
+}
+.btn-open-img {
+  width: 30rpx;
+  height: 30rpx;
+}
+.issues-list {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin-top: 10rpx;
+}
+.item-labels {
+  flex: 1;
+}
+.item-label {
+  flex: 1;
+  background: #7acfa6;
+  color: #fff;
+  font-size: 9pt;
+  padding: 4rpx 10rpx;
+  border-radius: 3px;
+  margin: 0 5rpx;
+}
+.item-status {
+  font-size: 10pt;
+  color: #999;
+}
+.issues-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background-color: #fff;
+  margin: 10rpx 30rpx;
+  font-size: 11pt;
+  padding: 15rpx 25rpx;
+  min-height: 100rpx;
+  border-radius: 3px;
+  box-shadow: 1px 2px 3px #ddd;
+}
+.issues-item.close {
+  flex-direction: row;
+  align-items: center;
+}
+.issues-item.close:active {
+  background-color: #fcfcfc;
+  opacity: 0.8;
+}
+.item-hd {
+  display: flex;
+  align-items: center;
+}
+.btn-id {
+  flex-shrink: 0;
+  color: #aaa;
+  font-size: 10pt;
+  margin-right: 10rpx;
+}
+.issues-item.close .btn-text {
+  flex: 1 1 auto;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  margin: 0;
+}
+.item-bd {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0 10rpx 15rpx;
+  font-size: 10pt;
+}
+.item-content {
+  padding-bottom: 20rpx;
+}
+.item-comment {
+  display: flex;
+  border-top: 1rpx solid #eee;
+  padding: 10rpx 5rpx;
+}
+.item-comment-img {
+  flex-shrink: 0;
+  width: 50rpx;
+  height: 50rpx;
+  margin: 10rpx 20rpx 10rpx 10rpx;
+  border-radius: 3px;
+}
+.item-comment-bd {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.item-comment-name {
+  font-size: 9pt;
+  color: #999;
+}
+.issues-label {
+  font-size: 10pt;
+  line-height: 100%;
+  color: #999;
+  margin: 25rpx 20rpx 15rpx;
+}
+.issues-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background-color: #fff;
+  border-top: 1px solid #e5e5e5;
+  border-bottom: 1px solid #e5e5e5;
+}
+.issues-img-panel {
+  display: flex;
+  flex-wrap: wrap;
+  background-color: #fff;
+  border-top: 1px solid #e5e5e5;
+  border-bottom: 1px solid #e5e5e5;
+  padding: 15rpx 25rpx;
+}
+.issues-img-panel.error {
+  background: rgba(231, 138, 176, 0.06);
+}
+.issues-input {
+  border-bottom: 1px solid #e5e5e5;
+  padding: 15rpx 25rpx;
+}
+.issues-input.error {
+  background: rgba(231, 138, 176, 0.06);
+}
+.issues-textarea {
+  width: 100%;
+  padding: 25rpx;
+  min-height: 225rpx;
+  box-sizing: border-box;
+}
+.issues-textarea.error {
+  background: rgba(231, 138, 176, 0.06);
+}
+.issues-photo-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  margin: 20rpx;
+  margin-right: 0;
+  width: 135rpx;
+  height: 135rpx;
+  border: 1rpx solid #e5e5e5;
+  border-radius: 5rpx;
+}
+.issues-photo-item:active {
+  opacity: 0.8;
+}
+.issues-photo-item .remind-img {
+  padding: 0;
+}
+.issues-photo-item image {
+  width: 100%;
+  height: 100%;
+}
+.add-photo:active {
+  background: #f0f0f0;
+}
+.add-photo::before,
+.add-photo::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background: #e5e5e5;
+}
+.add-photo:active::before,
+.add-photo:active::after {
+  background: #ddd;
+}
+.add-photo::before {
+  width: 10rpx;
+  height: 80rpx;
+  margin-top: -40rpx;
+  margin-left: -5rpx;
+}
+.add-photo::after {
+  width: 80rpx;
+  height: 10rpx;
+  margin-top: -5rpx;
+  margin-left: -40rpx;
+}
+.issues-remind {
+  flex: 1;
+  font-size: 9pt;
+  line-height: 135%;
+  color: #ccc;
+  padding: 0 30rpx;
+  word-break: break-all;
+  text-indent: 1em;
+  padding-top: 30rpx;
+}
+.issues-remind.text-center {
+  text-align: center;
+}
+.submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 40rpx 3%;
+  height: 80rpx;
+  border-radius: 3px;
+  text-align: center;
+  background-color: #0099ff;
+  color: #fff;
+  font-size: 12pt;
+  line-height: 150%;
+  padding: 0;
+  border: none;
+}
+.submit-btn.disabled {
+  opacity: 0.7;
+}
+.submit-btn:active {
+  opacity: 0.7;
+}
 </style>
