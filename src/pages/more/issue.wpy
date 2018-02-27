@@ -48,16 +48,19 @@
         <textarea class="issues-textarea {{(showError&&!content)?'error':''}}" cursor-spacing="50" placeholder="请输入反馈内容" bindinput="listenerTextarea"></textarea>
       </view>
       <!-- 图片上传 -->
-      <text class="issues-label">选择图片（可选）</text>
-      <view class="issues-img-panel {{(showError&&uploading)?'error':''}}">
-        <view class="issues-photo-item" wx:if="{{uploading}}">
-          <image class="remind-img" src="/images/index/loading.gif"></image>
+      <block wx:if="{{upload}}">
+        <text class="issues-label">选择图片（可选）</text>
+        <view class="issues-img-panel {{(showError&&uploading)?'error':''}}">
+          <view class="issues-photo-item" wx:if="{{uploading}}">
+            <image class="remind-img" src="/images/index/loading.gif"></image>
+          </view>
+          <view class="issues-photo-item add-photo" wx:else bindtap="choosePhoto"></view>
+          <view class="issues-photo-item" wx:for="{{imgs}}" wx:key="*this">
+            <image src="{{item}}?imageView2/2/w/250/interlace/1/q/88" mode="aspectFill" data-index="{{index}}" bindtap="previewPhoto"></image>
+          </view>
         </view>
-        <view class="issues-photo-item add-photo" wx:else bindtap="choosePhoto"></view>
-        <view class="issues-photo-item" wx:for="{{imgs}}" wx:key="*this">
-          <image src="{{item}}?imageView2/2/w/250/interlace/1/q/88" mode="aspectFill" data-index="{{index}}" bindtap="previewPhoto"></image>
-        </view>
-      </view>
+      </block>
+
       <text class="issues-remind"> 您的反馈将会发到广科学习平台的后台，我们在看到您的后台后会及时回复，您可以在反馈页面进行查询;另外你还可以加入用户反馈群进行反馈。 注:频繁恶意反馈的用户将会取消其反馈资格。
       </text>
       <view class="submit-btn {{uploading?'disabled':''}}" bindtap="submit">
@@ -85,14 +88,16 @@ export default class Issue extends wepy.page {
     upload: false,
     uploading: false,
     qiniu: "",
-    showError: false
+    showError: false,
+    // imgs: []
   };
   async onLoad() {
     if (apis.g_status) {
       return;
     }
     let networkType = await wepy.getNetworkType(),
-      sysInfo = {}; 
+      sysInfo = {},
+      token = {};
     console.log(networkType);
     if (networkType) {
       sysInfo = await wepy.getSystemInfo();
@@ -130,11 +135,21 @@ export default class Issue extends wepy.page {
     }
     wepy.showNavigationBarLoading();
     token = await wepy.request({
-      url: `${apis._server}/qiniu/getUploadToken`,
-      method: "POST",
-      data: apis._user.openid,
-    })
-    console.log(token)
+      url: `${apis._server}/learningsystem/Qiniu/getUploadToken`,
+      method: "GET",
+      data: {
+        fileType: "img",
+        fileUse: "issue"
+      }
+    });
+    // console.log(token)
+    if (token.statusCode === 200) {
+      console.log(token);
+      this.upload = true;
+      this.qiniu = token.data.data.token;
+      this.$apply();
+      console.log(this);
+    }
   }
   openList() {
     if (this.list.count) {
@@ -144,7 +159,8 @@ export default class Issue extends wepy.page {
   }
   async choosePhoto() {
     let chooseConfirm = {},
-      chooseImg = {};
+      chooseImg = {},
+      _this = this;
     chooseConfirm = await wepy.showModal({
       title: "提示",
       content: "上传图片需要消耗流量，是否继续？",
@@ -162,20 +178,55 @@ export default class Issue extends wepy.page {
           imgLen = tempFilePaths.length;
         this.uploading = true;
         this.imgLen = this.imgLen + imgLen;
-        // console.log(tempFilePaths)
+        this.$apply();
         tempFilePaths.forEach(function(e) {
-          // this.uploadImg(e);
-          console.log(e)
+          _this.uploadImg(e);
+          console.log(e);
+          console.log(this);
         });
       }
     }
   }
-  uploadImg(path) {
-    if(apis.g_status){
-      apis.showErrorModal(apis.g_status, '上传失败');
+  async uploadImg(path) {
+    if (apis.g_status) {
+      apis.showErrorModal(apis.g_status, "上传失败");
       return;
     }
-
+    console.log(path);
+    let imgurl = {};
+    wepy.showNavigationBarLoading();
+    imgurl = await wepy.uploadFile({
+      url: "https://upload-z2.qbox.me",
+      header: {
+        "Content-Type": "multipart/form-data"
+      },
+      filePath: path,
+      name: "file",
+      formData: {
+        token: this.qiniu
+      }
+    });
+    console.log(imgurl);
+    try {
+      if (imgurl) {
+        console.log(JSON.parse(imgurl.data));
+        let imgUrl = JSON.parse(imgurl.data);
+        this.imgs.push(`http://p328nzenm.bkt.clouddn.com/${imgUrl.key}`);
+        this.$apply();
+        console.log(this.imgs);
+      }
+      if (this.imgs.length === this.imgLen) {
+        this.uploading = false;
+        this.$apply();
+        console.log(this.uploading)
+      }
+    } catch (e) {
+      this.uploading = false;
+      this.imgLen = this.imgLen - 1;
+      this.$apply();
+    } finally {
+      wepy.hideNavigationBarLoading();
+    }
   }
   listenerTitle(e) {
     this.title = e.detail.value;
@@ -188,16 +239,17 @@ export default class Issue extends wepy.page {
     console.log(this.content);
   }
   async submit() {
+    let title = '', content = '', imgs = '';
     if (!this.title || !this.content) {
       configs.showErrorModal("标题和内容不能为空", "温馨提示");
       return false;
     }
-    if (!this.uploading) {
+    if (this.uploading) {
       configs.showErrorModal("请等待图片上传完毕再提交", "温馨提示");
       return false;
     }
-    if(apis.g_status){
-      apis.showErrorModal(apis.g_status, '失败');
+    if (apis.g_status) {
+      apis.showErrorModal(apis.g_status, "失败");
       return;
     }
     let submitConfirm = {},
@@ -209,6 +261,8 @@ export default class Issue extends wepy.page {
 
     if (submitConfirm.confirm) {
       // console.log(submitConfirm.confirm)
+      title = `【${apis._user.wx.nickName}】 ${this.title}`;
+      content = `${this.content}\r\n\r\n${this.info}`;
       submitInfo = await wepy.request({
         url: `${apis._server}/learningsystem/Issues/submitIssues`,
         method: "POST",
@@ -230,6 +284,17 @@ export default class Issue extends wepy.page {
       }
       console.log(submitInfo);
     }
+  }
+
+  previewPhoto(e) {
+    if(this.uploading){
+      configs.showErrorModal('正在上传图片', '预览失败');
+      return false;
+    }
+    wepy.previewImage({
+      current: this.imgs[e.target.dataset.index],
+      urls: this.imgs
+    })
   }
 }
 </script>
