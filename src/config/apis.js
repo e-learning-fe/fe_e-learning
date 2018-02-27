@@ -9,7 +9,8 @@ const apis = {
     we: {},
     stuInfo: {},
     subjectListTags: {},
-    subjectList: {}
+    subjectList: {},
+    myInfo: {}
   },
   cache: {},
   key (data) {

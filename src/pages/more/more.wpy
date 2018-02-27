@@ -4,11 +4,10 @@
     <view class="user-info-box">
       <block wx:if="{{is_bind}}">
         <view class="user-info">
-          <block wx:for="{{userInfo}}" wx:key="userInfo">
             <view class="info-hd">
               <image class="user-atavar" src="{{userAvatar}}"></image>
               <view class="user-title">
-                <text class="user-name">{{item.name}}</text>
+                <text class="user-name">{{userInfo.name}}</text>
               </view>
               <view class="time-box">
                 <text class="time-term">{{time.term}}</text>
@@ -17,17 +16,16 @@
             </view>
             <view class="info-bd">
               <view class="info-bd-left">
-                <text>性别：{{item.gender}}</text>
-                <text>年级：{{item.grade}}</text>
-                <text>班级：{{item.classNo}}</text>
+                <text>性别：{{userInfo.gender}}</text>
+                <text>年级：{{userInfo.grade}}</text>
+                <text>班级：{{userInfo.classNo}}</text>
               </view>
               <view class="info-bd-right">
-                <text>学号：{{item.studentId}}</text>
-                <text>学院：{{item.college}}</text>
-                <text>专业：{{item.major}}</text>
+                <text>学号：{{userInfo.studentId}}</text>
+                <text>学院：{{userInfo.college}}</text>
+                <text>专业：{{userInfo.major}}</text>
               </view>
             </view>
-          </block>
         </view>
         <navigator url="append" class="append-link">
           <view class="more-btn">
@@ -90,42 +88,70 @@
     }
     // more.js
     data = {
-      userInfo: [{
+      time: {
+        day: '',
+        week: ''
+      },
+      userInfo: {
         types: 'student',
-        studentId: '0104150210',
-        name: '吴欢达',
-        gender: '男',
-        mobilephone: '13192294541',
-        qq: '583783099',
-        wechat: 'myWechat_2018',
-        grade: '大三',
-        classNo: '15软件2(JAVA)班',
-        college: '计算机学院',
-        major: '软件技术'
-      }]
+        studentId: '',
+        name: '',
+        gender: '',
+        grade: '',
+        classNo: '',
+        college: '',
+        major: ''
+      }
     }
     // 获取用户头像
     async onLoad() {
+      let myinfo = apis._user.myinfo
       this.setData({
         userAvatar: apis._user.wx.avatarUrl,
-        userNickName: apis._user.wx.nickName
+        userNickName: apis._user.wx.nickName,
+        is_bind: apis._user.is_bind
       });
+      
+    }
+    onReady() {
+      let myinfo = apis._user.myInfo,
+        bind = apis._user.is_bind
+      // console.log(myinfo)
+      if (bind) {
+        this.userInfo = {
+          types: 'student',
+          studentId: myinfo.stuStudentid,
+          name: myinfo.stuName,
+          gender: myinfo.stuGender,
+          grade: myinfo.classs.cGrade,
+          classNo: myinfo.classs.cName,
+          college: myinfo.classs.cCollege,
+          major: myinfo.classs.cMajor
+        }
+        this.time = {
+          week: apis._time.week,
+          day: apis._time.day
+        }
+        console.log(this.data)
+        
+        this.$apply()
+      }
     }
     // 获取时间
     onShow() {
-      this.getData();
+      // this.getData();
     }
-    getData() {
-      let _this = this;
-      let days = ['一', '二', '三', '四', '五', '六', '日'];
-      _this.setData({
-        'time': {
-          'week': '19',
-          'day': days[1 - 1]
-        },
-        'is_bind': !!apis._user.is_bind
-      });
-    }
+    // getData() {
+    //   let _this = this;
+    //   let days = ['一', '二', '三', '四', '五', '六', '日'];
+    //   _this.setData({
+    //     'time': {
+    //       'week': '19',
+    //       'day': days[1 - 1]
+    //     },
+    //     'is_bind': !!apis._user.is_bind
+    //   });
+    // }
   }
 </script>
 

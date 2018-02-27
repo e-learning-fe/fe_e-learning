@@ -4,3 +4,4 @@ dist
 *.wpy___jb_tmp___
 .wepycache
 package-lock.json
+yarn.lock

@@ -66,6 +66,8 @@
         'pages/core/bbs/bbs',
         'pages/core/bbs/detail/detail',
         "pages/more/append"
+        "pages/more/append",
+        "pages/more/issue"
       ],
       window: {
         backgroundTextStyle: 'light',

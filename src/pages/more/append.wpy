@@ -1,5 +1,5 @@
 <template>
-  <view class="container">
+  <view class="container" style="background-color: #f6f6f6;">
     <view class="remind-box" wx:if="{{remind}}">
       <image class="remind-img" src="/images/index/loading.gif"></image>
     </view>
@@ -9,19 +9,19 @@
           <form class="append-form">
             <view class="input-group {{email_focus ? 'active' : ''}}">
               <text class="input-label">邮箱:</text>
-              <input type="email" cursor-spacing="30" id="email" placeholder="请输入邮箱" bindinput="emailInput" bindfocus="inputFocus" bindblur="inputBlur" />
+              <input type="email" cursor-spacing="30" id="email" placeholder="请输入邮箱" value="{{email}}" bindinput="emailInput" bindfocus="inputFocus" bindblur="inputBlur" />
             </view>
             <view class="input-group {{phone_focus ? 'active' : ''}}">
               <text class="input-label">手机:</text>
-              <input type="number" cursor-spacing="30" id="phone" placeholder="请输入手机号码" bindinput="phoneInput" bindfocus="inputFocus" bindblur="inputBlur" />
+              <input type="number" cursor-spacing="30" id="phone" placeholder="请输入手机号码" value="{{phone}}" bindinput="phoneInput" bindfocus="inputFocus" bindblur="inputBlur" />
             </view>
             <view class="input-group {{qq_focus ? 'active' : ''}}">
               <text class="input-label">QQ:</text>
-              <input type="number" cursor-spacing="30" id="qq" placeholder="请输入qq" bindinput="qqInput" bindfocus="inputFocus" bindblur="inputBlur" />
+              <input type="number" cursor-spacing="30" id="qq" placeholder="请输入qq" value="{{qq}}" bindinput="qqInput" bindfocus="inputFocus" bindblur="inputBlur" />
             </view>
             <view class="input-group {{we_focus ? 'active' : ''}}">
               <text class="input-label">微信号:</text>
-              <input type="text" cursor-spacing="30" id="we" placeholder="请输入微信号" bindinput="weInput" bindfocus="inputFocus" bindblur="inputBlur" />
+              <input type="text" cursor-spacing="30" id="we" placeholder="请输入微信号" value="{{we}}" bindinput="weInput" bindfocus="inputFocus" bindblur="inputBlur" />
             </view>
             <view class="confirm-btn" bindtap="append">
             <text>完善信息</text>
@@ -64,6 +64,19 @@
         this.remind = ''
         this.$apply()
       }, 1000);
+      let userinfo = apis._user.myInfo
+      if (userinfo.stuEmail && userinfo.stuPhoner && userinfo.stuQq) {
+        this.email = userinfo.stuEmail
+        this.phone = userinfo.stuPhoner
+        this.qq = userinfo.stuQq
+        this.we = userinfo.stuWechat
+        console.log('ye')
+      }
+    }
+
+    onLoad() {
+      // let myInfo = apis._user.myInfo
+
     }
     async append() {
       let appendInfo = {}
@@ -81,16 +94,24 @@
         header: {
           'content-type': 'application/x-www-form-urlencoded'
         },
-        dataType: 'json',
         data: {
           openid: apis._user.openid,
           email: this.email,
           phone: this.phone,
           qq: this.qq,
-          wechat: this.wechat,
+          wechat: this.we,
           types: this.types
         }
       })
+
+      let status = appendInfo.data.status
+      if(status>=200 || status < 400) {
+        wepy.showToast({
+          title: '成功完善信息',
+          icon: 'success',
+          duration: 1500
+        })
+      }
       console.log(appendInfo)
     }
     inputFocus(e) {

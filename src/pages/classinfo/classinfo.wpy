@@ -38,34 +38,34 @@
     </swiper>
     <view class="title-student">学生信息</view>
     <block wx:for="{{userInfo}}" wx:key="studentInfo">
-      <view class="userInfo-wrap" wx:if="{{item.types == 'student'}}">
+      <view class="userInfo-wrap" wx:if="{{item.stuName}}">
         <view class="userInfo-avatar-wrap">
           <image class="userInfo-avatar" src="{{userAvatar}}"></image>
         </view>
         <view class="userInfo-info-wrap">
           <view class="userInfo-info">
             <view class="userInfo-info-name">学号</view>
-            <view class="userInfo-info-detail">：{{item.studentId}}</view>
+            <view class="userInfo-info-detail">：{{item.stuStudentid}}</view>
           </view>
           <view class="userInfo-info">
             <view class="userInfo-info-name">姓名</view>
-            <view class="userInfo-info-detail">：{{item.name}}</view>
+            <view class="userInfo-info-detail">：{{item.stuName}}</view>
           </view>
           <view class="userInfo-info">
             <view class="userInfo-info-name">性别</view>
-            <view class="userInfo-info-detail">：{{item.gender}}</view>
+            <view class="userInfo-info-detail">：{{item.stuGender}}</view>
           </view>
           <view class="userInfo-info">
             <view class="userInfo-info-name">手机</view>
-            <view class="userInfo-info-detail">：{{item.mobilephone}}</view>
+            <view class="userInfo-info-detail">：{{item.stuPhoner}}</view>
           </view>
           <view class="userInfo-info">
             <view class="userInfo-info-name">QQ号码</view>
-            <view class="userInfo-info-detail">：{{item.qq}}</view>
+            <view class="userInfo-info-detail">：{{item.stuQq}}</view>
           </view>
           <view class="userInfo-info">
             <view class="userInfo-info-name">微信号码</view>
-            <view class="userInfo-info-detail">：{{item.wechat}}</view>
+            <view class="userInfo-info-detail">：{{item.stuWechat}}</view>
           </view>
         </view>
       </view>
@@ -96,11 +96,11 @@
         {types: 'teacher', name: '游琪', subjects: '网页设计与制作', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
         {types: 'teacher', name: '游琪', subjects: '网页设计与制作', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
         {types: 'teacher', name: '游琪', subjects: '网页设计与制作', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
-        {types: 'student', studentId: '0104150210', name: '吴欢达', gender: '男', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
-        {types: 'student', studentId: '0104150211', name: '余枫', gender: '男', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
-        {types: 'student', studentId: '0104150212', name: '凌波丽', gender: '女', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
-        {types: 'student', studentId: '0104150213', name: '碇真嗣', gender: '男', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
-        {types: 'student', studentId: '0104150214', name: '明日香', gender: '女', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
+        // {types: 'student', studentId: '0104150210', name: '吴欢达', gender: '男', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
+        // {types: 'student', studentId: '0104150211', name: '余枫', gender: '男', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
+        // {types: 'student', studentId: '0104150212', name: '凌波丽', gender: '女', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
+        // {types: 'student', studentId: '0104150213', name: '碇真嗣', gender: '男', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
+        // {types: 'student', studentId: '0104150214', name: '明日香', gender: '女', mobilephone: '13192294541', qq: '583783099', wechat: 'myWechat_2018'},
       ],
       indicatorDots: true,
       interval: 5000,
@@ -122,10 +122,11 @@
       })
     }
 
-    async onLoad() {
+    onLoad() {
       this.setData({
         userAvatar: apis._user.wx.avatarUrl
       })
+      this.userInfo.push(...apis._user.stuInfo)
     }
 
     
