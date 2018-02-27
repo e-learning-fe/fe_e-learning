@@ -8,13 +8,14 @@
       <view class="content">
         <view class="bd">
           <form class="login-form">
+      
             <view class="input-group">
               <image class="input-label" src="../../images/more/user_icon.png"></image>
-              <input type="number" cursor-spacing="30" id="userid" maxlength="10" placeholder="请输入10位学号" placeholder-style="color: #f4f4f4; font-size: 10pt;" bindinput="useridInput" bindfocus="inputFocus" bindblur="inputBlur" />
+              <input type="number" value="0104150701" cursor-spacing="30" id="userid" maxlength="10" placeholder="请输入10位学号" placeholder-style="color: #f4f4f4; font-size: 10pt;" bindinput="useridInput"/>
             </view>
             <view class="input-group">
               <image class="input-label" src="../../images/more/password_icon.png"></image>
-              <input type="password" cursor-spacing="30" id="password" placeholder="初始密码为身份证后6位" placeholder-style="color: #f4f4f4; font-size: 10pt;" bindinput="passwordInput" bindfocus="inputFocus" bindblur="inputBlur" />
+              <input type="password" value="123456" cursor-spacing="30" id="password" placeholder="初始密码为身份证后6位" placeholder-style="color: #f4f4f4; font-size: 10pt;" bindinput="passwordInput"/>
             </view>
             <view class="login-help" bindtap="showHelp">
               <text>帮助</text>
@@ -72,10 +73,8 @@
     data = {
       remind: '加载中',
       help_status: false,
-      userid_focus: false,
-      password_focus: false,
-      userid: '',
-      password: '',
+      userid: '0104150701',
+      password: '123456',
       types: 'student',
       userType: [{
           types: 'teacher',
@@ -100,13 +99,12 @@
       }, 1000);
     }
     async bind() {
-      let _this = this;
       let bindInfo = {}
       if (apis.g_status) {
         configs.showErrorModal(apis.g_status, '绑定失败');
         return;
       }
-      if (!_this.data.userid || !_this.data.password) {
+      if (!this.userid || !this.password) {
         configs.showErrorModal('账号密码不能位空', '提醒');
         return false;
       }
@@ -126,7 +124,7 @@
       })
       // await apis.showLoadToast('请稍后')
       console.log(bindInfo)
-      let status = bindInfo.data.stutas
+      let status = bindInfo.data.status
       if(status >=200 && status < 400) {
         configs.showLoadToast('请稍后')
         apis.cache = {}
@@ -138,10 +136,11 @@
           duration: 1500
         })
         
-        // wepy.navigateBack()
-        wepy.redirectTo({
-          url: '/pages/more/append'
-        })
+        wepy.navigateBack()
+        // wepy.redirectTo({
+        //   url: '/pages/index/index'
+        // })
+        
       } else {
         wepy.hideToast();
         configs.showErrorModal('您输入的账号或密码错误，请重新输入', '绑定失败');
@@ -201,19 +200,21 @@
       console.log('密码:'+e.detail.value)
     }
     inputFocus(e) {
-      if (e.target.id == 'userid') {
-        this.userid_focus = true;
-        console.log(this.remind)
-      } else if (e.target.id == 'password') {
-        this.password_focus = true;
-      }
+      // if (e.target.id == 'userid') {
+      //   this.userid_focus = true;
+      //   this.$apply()
+      //   console.log(this.userid_focus)
+      //   console.log(this.remind)
+      // } else if (e.target.id == 'password') {
+      //   this.password_focus = true;
+      // }
     }
     inputBlur(e) {
-      if (e.target.id == 'userid') {
-        this.userid_focus = false;
-      } else if (e.target.id == 'password') {
-        this.password_focus = false;
-      }
+      // if (e.target.id == 'userid') {
+      //   this.userid_focus = false;
+      // } else if (e.target.id == 'password') {
+      //   this.password_focus = false;
+      // }
     }
     tapHelp(e) {
       if (e.target.id == 'help') {
@@ -343,8 +344,10 @@
     margin: 40rpx 10%;
     padding: 25rpx 10rpx;
     border-bottom: 1px solid #f4f4f4;
+    transition: all .25s ease-in-out;
     color: #f4f4f4;
   }
+  
   .input-label {
     width: 50rpx;
     height: 50rpx;

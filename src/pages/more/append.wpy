@@ -1,34 +1,145 @@
 <template>
   <view class="container">
-    <iamge class="title" src="../../images/more/title.png"></iamge>
-    <view class="content">
-      <view class="hd"></view>
+    <view class="remind-box" wx:if="{{remind}}">
+      <image class="remind-img" src="/images/index/loading.gif"></image>
     </view>
+    <block wx:else>
+      <view class="content">
+        <view class="bd">
+          <form class="append-form">
+            <view class="input-group {{email_focus ? 'active' : ''}}">
+              <text class="input-label">邮箱:</text>
+              <input type="email" cursor-spacing="30" id="email" placeholder="请输入邮箱" bindinput="emailInput" bindfocus="inputFocus" bindblur="inputBlur" />
+            </view>
+            <view class="input-group {{phone_focus ? 'active' : ''}}">
+              <text class="input-label">手机:</text>
+              <input type="number" cursor-spacing="30" id="phone" placeholder="请输入手机号码" bindinput="phoneInput" bindfocus="inputFocus" bindblur="inputBlur" />
+            </view>
+            <view class="input-group {{qq_focus ? 'active' : ''}}">
+              <text class="input-label">QQ:</text>
+              <input type="number" cursor-spacing="30" id="qq" placeholder="请输入qq" bindinput="qqInput" bindfocus="inputFocus" bindblur="inputBlur" />
+            </view>
+            <view class="input-group {{we_focus ? 'active' : ''}}">
+              <text class="input-label">微信号:</text>
+              <input type="text" cursor-spacing="30" id="we" placeholder="请输入微信号" bindinput="weInput" bindfocus="inputFocus" bindblur="inputBlur" />
+            </view>
+            <view class="confirm-btn" bindtap="append">
+            <text>完善信息</text>
+          </view>
+          </form>
+        </view>
+      </view>
+    </block>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
   import apis from '../../config/apis.js'
-  export default class Append extends wepy.page{
+  import configs from '../../config'
+  export default class Append extends wepy.page {
     config = {
       // append.json
       navigationBarTitleText: '完善信息'
     }
+    data = {
+      remind: '加载中',
+      email_focus: false,
+      phone_focus: false,
+      qq_focus: false,
+      we_focus: false,
+      email: '',
+      phone: '',
+      qq: '',
+      we: '',
+      types: 'student',
+      
+    }
+    onReady() {
+      setTimeout(async() => {
+        // await this.setData({
+        //   remind: ''
+        // })
+        console.log(this['remind'])
+        this.remind = ''
+        this.$apply()
+      }, 1000);
+    }
+    async append() {
+      let appendInfo = {}
+      if (apis.g_status) {
+        configs.showErrorModal(apis.g_status, '绑定失败');
+        return;
+      }
+      if (!this.email ||  !this.phone || !this.qq || !this.we || !this.types) {
+        configs.showErrorModal('信息不能为空', '提醒');
+        return false;
+      }
+      appendInfo = await wepy.request({
+        url: `${apis._server}/learningsystem/WeChat/appendUserInfo`,
+        method: 'POST',
+        header: {
+          'content-type': 'application/x-www-form-urlencoded'
+        },
+        dataType: 'json',
+        data: {
+          openid: apis._user.openid,
+          email: this.email,
+          phone: this.phone,
+          qq: this.qq,
+          wechat: this.wechat,
+          types: this.types
+        }
+      })
+      console.log(appendInfo)
+    }
+    inputFocus(e) {
+      let id = e.target.id
+      this[id+'_focus'] = true
+      console.log(id+'   '+this[id+'_focus'])
+    }
+    inputBlur(e) {
+      let id = e.target.id
+      this[id+'_focus'] = false
+      console.log(id+ '    ' +this[id+'_focus'])
+    }
+    emailInput(e) {
+      this.email = e.detail.value
+      console.log(this.email)
+    }
+    phoneInput(e) {
+      this.phone = e.detail.value
+      console.log(this.phone)
+    }
+    qqInput(e) {
+      this.qq = e.detail.value
+      console.log(this.qq)
+    }
+    weInput(e) {
+      this.we = e.detail.value
+      console.log(this.we)
+    }
+   
   }
 </script>
 
 <style lang="less">
- 
-  .append-title {
+ .remind-box {
     position: absolute;
-    top: 75rpx;
     width: 100%;
-    color: #f4f4f4;
-    font-size: 20pt;
-    line-break: 200%;
-    text-align: center;
+    height: 100%; 
+    z-index: 999;
   }
+  .input-group {
+  display: flex;
+  align-items: center;
+  padding: 25rpx 10rpx;
+  margin: 40rpx 3%;
+  background: #fff;
+  border-radius: 5px;
+  border: 2px solid #f4f4f4;
+  transition: all .25s ease-in-out;
+}
   .append-form {
     padding: 150rpx 0 50rpx;
   }
@@ -36,14 +147,39 @@
     padding: 20rpx 8rpx;
     margin: 30rpx 10%;
   }
+  .input-group.active {
+    border: 2px solid #0099ff;
+  }
+  .input-label {
+  color: #888;
+  font-size: 13pt;
+  height: 25rpx;
+  line-height: 25rpx;
+  padding: 0 25rpx;
+  border-right: 1px solid #d8d8d8; 
+}
   .append-form .input-label {
     font-size: 11pt;
     height: 20rpx;
     line-height: 20rpx;
     padding: 0 20rpx;
   }
-  .append-form .input-group input, .append-form .input-group picker {
+  .append-form .input-group input,
+  .append-form .input-group picker {
     font-size: 11pt;
     padding: 0 20rpx;
+  }
+  .confirm-btn {
+    font-size: 13pt;
+    height: 85rpx;
+    line-height: 85rpx;
+    color: #f4f4f4;
+    text-align: center;
+    background: #e55c5c;
+    border-radius: 5px;
+    margin: 50rpx 10%;
+  }
+  .comfirm-btn:active {
+    opacity: .8;
   }
 </style>

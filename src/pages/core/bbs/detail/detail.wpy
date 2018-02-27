@@ -1,0 +1,127 @@
+<template>
+  <view class="container">
+    <view class="topic-box">
+      <view class="title">123213</view>
+      <view class="info">
+        <text>2018-01-15 14:54:00</text>
+        <text>网页设计与制作</text>
+      </view>
+      <view class="detail">
+        <text>天天开心下昂天天开心下昂上天天开心下昂上天天开心下昂上天天开心下昂上天天开心下昂上天天开心下昂上天天开心下昂上天天开心下昂上天天开心下昂上v上</text>
+      </view>
+      <navigator class="reply-btn">我来回答</navigator>
+    </view>
+    <view class="reply-box">
+      <view class="reply-hd">
+        <image class="reply-hd-avatar" src="{{userAvatar}}"></image>
+        <text class="reply-hd-name">Howard</text>
+        <text class="info">2018-01-15 14:54:00</text>
+      </view>
+      <view class="reply-content">
+        <text>HowardHowardHowardHowardHow天天开心下昂天天开心下昂上天天开心下昂上天天开心下昂上天天开心下昂上天天开心下昂上天天开心下昂上天天开心下昂上天天开心下昂上天天开心下昂上v上ard</text>
+      </view>
+      <text class="reply-floor">1#</text>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from "wepy";
+  import apis from "../../../../config/apis.js"
+  export default class Detail extends wepy.page {
+    config = {}
+
+    // bbs_detail.js
+    /**
+     * Author: Huanda.Wu
+     * Date: 2018.01.15
+     */
+    async onLoad() {
+      this.setData({
+        userAvatar: apis._user.wx.avatarUrl
+      })
+    }
+  }
+</script>
+
+<style lang="less">
+  .container {
+    background: #fff;
+    padding: 0 30rpx;
+    flex: 0;
+  }
+  .topic-box, .reply-box  {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10rpx;
+    padding-bottom: 30rpx;
+  }
+  .topic-box {
+    border-bottom: 3rpx dotted #b2b2b2;
+  }
+  .reply-box {
+    border-bottom: 1rpx dotted #b2b2b2;
+  }
+  .reply-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    bottom: 5rpx;
+    font-size: 12pt;
+    color: #fff;
+    background: #73b4ef;
+    border-radius: 15rpx;
+    width: 100%;
+    height: 70rpx;
+  }
+  .title {
+    font-size: 16pt;
+    font-weight: bold;
+    margin-top: 40rpx;
+    line-height: 140%;
+    word-break: break-all;
+  }
+  .info {
+    margin-top: 30rpx;
+    color: #b2b2b2;
+  }
+  .info text {
+    padding: 0 20rpx 0 5rpx;
+  }
+  .detail {
+    font-size: 11pt;
+    line-height: 150%;
+    padding: 30rpx 15rpx 20rpx;
+    word-break: break-all;
+    text-align: justify;
+  }
+  .reply-hd {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    padding: 10rpx 0;
+  }
+  .reply-hd-avatar {
+    margin: 10rpx 10rpx 10rpx 0;
+    width: 110rpx;
+    height: 110rpx;
+    border-radius: 50%;
+  }
+  .reply-hd-name {
+    font-size: 13pt;
+    padding-right: 10rpx;
+  }
+  .reply-content text {
+    font-size: 11pt;
+    word-break: break-all;
+  }
+  .reply-floor {
+    padding: 5rpx 10rpx;
+    font-size: 11pt;
+    color: #b2b2b2;
+    text-align: right;
+  }
+</style>

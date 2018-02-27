@@ -2,9 +2,9 @@
   <view class="container">
     <!-- 课程分类 -->
     <scroll-view class="filter" scroll-x="true">
-      <block wx:for="{{list}}" wx:key="{{lessonId}}">
-        <view class="filter-item {{actived.rdqId === item.rdqId ? 'active' : ''}}" data-id="{{item.id}}" id="{{item.rdqId}}" @tap="changeFilter">
-          <text class="filter-item-text">{{item.rdqId}}</text>
+      <block wx:for="{{list}}" wx:key="{{lNumber}}">
+        <view class="filter-item {{actived.lNumber == item.lNumber ? 'active' : ''}}" data-id="{{item.rdqId}}" id="{{item.rdqId}}" @tap="changeFilter">
+          <text class="filter-item-text">{{item.lName}}</text>
         </view>
       </block>
     </scroll-view>
@@ -13,20 +13,26 @@
       <view class="loader">
         <image src="../../../images/index/loading.gif" wx-if="{{loading}}"></image>
       </view>
-      <block wx:for="{{actived.data}}" wx:key="item.topicId">
-        <navigator>
-          <view class="list-item">
-            <text class="list-item-title">{{item.rdqTheme}}</text>
-            <text class="list-item-desc">{{item.rdqText}}</text>
-            <view class="list-item-bottom">
-              <text class="list-item-bottom-text">时间: {{item.rdqDate}}</text>
-              <text class="list-item-bottom-text">课程: {{item.lessonName}}</text>
-              <text class="list-item-bottom-text">回复数: {{item.wbCcontenNum}}</text>
+      <block wx:for="{{actived.data}}" wx:key="item.rdqId">
+        <!-- 不显示 rdqId 为 all 的标签-->
+        <block wx:if="{{item.rdqId != 'all'}}">
+          <navigator url="./detail/detail">
+            <view class="list-item">
+              <text class="list-item-title">{{item.rdqTheme}}</text>
+              <text class="list-item-desc">{{item.rdqText}}</text>
+              <view class="list-item-bottom">
+                <text class="list-item-bottom-text">时间: {{item.rdqDate}}</text>
+                <text class="list-item-bottom-text">课程: {{item.lName}}</text>
+                <text class="list-item-bottom-text">回复数: {{item.wbCcontenNum}}</text>
+              </view>
             </view>
-          </view>
-        </navigator>
+          </navigator>
+        </block>
       </block>
     </view>
+
+    <!-- 提醒消息 -->
+    <text class="content-ending">{{actived.remind}}</text>
   </view>
 </template>
 
@@ -34,42 +40,49 @@
   import wepy from 'wepy'
   import apis from '../../../config/apis.js'
   export default class Bbs extends wepy.page {
-    config = {}
+    config = {
+
+    }
+    // bbs.js
+    /**
+     * Author: Huanda.Wu
+     * Date: 2018.01.14
+     */
     data = {
       page: 0,
       list: [
         // {
-        //   lessonId: 'all',
+        //   rdqId: 'all',
         //   name: '全部'
         // },
         // {
-        //   lessonId: '001',
+        //   rdqId: '001',
         //   name: '网页设计与制作'
         // },
         // {
-        //   lessonId: '002',
+        //   rdqId: '002',
         //   name: '数据结构'
         // },
         // {
-        //   lessonId: '003',
+        //   rdqId: '003',
         //   name: 'JAVA'
         // },
         // {
-        //   lessonId: '004',
+        //   rdqId: '004',
         //   name: '计算机'
         // },
         // {
-        //   lessonId: '005',
+        //   rdqId: '005',
         //   name: '不上课'
         // },
         // {
-        //   lessonId: '006',
+        //   rdqId: '006',
         //   name: '崩溃'
         // }
       ],
       actived: {
         id: 0,
-        lessonId: 'all',
+        rdqId: 'all',
         data: [],
         showMore: true,
         remind: '上滑加载更多'
@@ -77,57 +90,108 @@
       loading: false,
       disableReming: false
     }
-    onLoad() {
+    async onLoad() {
       this.loading = true
       this.actived.data = []
       this.actived.showMore = true
       this.actived.remind = '上滑加载更多'
       this.page = 0
-      this.getSubjectsList()
-      console.log(this.list[0].id);
+      await this.getSubjectsList()
+      // console.log(Object.prototype.toString.call(apis._user.subjectList))
+      // console.log(this.data)
     }
 
-    async getSubjectsList() {
+    async getSubjectsList(rdqId) {
+      // rdqId = rdqId || this.data.actived.rdqId
+      // if(this.data.page >= 5){
+      //   this.actived.showMore = false
+      //   this.actived.remind = '没有更多啦'
+
+      //   return false
+      // }
+      // if(!this.data.page){
+      //   this.actived.data = this.data.list[rdqId].storage
+      // }
+      // this.actived.remind = '正在加载中'
+      // wepy.showNavigationBarLoading()
+      
+      // 获取班级相应的课程标签 
+      let getSubjectsTags = {}
+      getSubjectsTags = await wepy.request({
+        url: `${apis._server}/learningsystem/Lesson/findClassLesson`,
+        method: 'GET',
+        header: {'content-type': 'application/x-www-form-urlencoded'},
+        dataType: 'json',
+        data: {
+          cClassid: '1'
+        }
+      })
+      console.log('课程标签')
+      console.log(getSubjectsTags.data)
+      apis._user.subjectListTags = getSubjectsTags.data.data
+      console.log(apis._user.subjectListTags)
+      if(getSubjectsTags.data.status || getSubjectsTags.data.status === 200){
+        this.list = [
+          {lNumber: 'all', lName: '全部', storage: []}
+        ]
+        this.list.push(...apis._user.subjectListTags)
+        // this.actived.data = this.list
+      }
+
+      // 获取话题列表
       let getSubjects = {}
       getSubjects = await wepy.request({
         url: `${apis._server}/learningsystem/Releasediscussionquestions/selectRdqAndTag`,
         method: 'GET',
         header: {'content-type': 'application/x-www-form-urlencoded'},
         dataType: 'json',
-        // data: {}
+        data: {}
       })
-      apis._user.we.subjectList = getSubjects.data
-      let status = getSubjects.statusCode
-      if(status || (status > 200  && status < 400)){
-        // this.actived.data = apis._user.we
-        this.list = [
-          {rdqId: 'all', rdqName: '全部'},
-          {rdqId: apis._user.we.subjectList}
-        ]
+      console.log('话题列表')
+      console.log(getSubjects.data)
+      apis._user.subjectList = getSubjects.data.data
+      console.log(apis._user.subjectList)
+      
+      if(getSubjects.data.status || getSubjects.data.status === 200){
+        // this.list = [
+        //   {rdqId: 'all', lesson: {lName: '全部'}}
+        // ]
+        // this.list.push(...apis._user.subjectList)
+        // this.actived.data = this.list
+        console.log("状态码正常")
       }
+      console.log(this.list)
+      console.log(this.actived.data)
       /* 根据后台传过来的JSON数组获取课程的编号，自动生成相应的id和区域按钮，
          id为前端自增长，用来确定对应按钮的位置，
-         lessonId(课程编号)为后端传递过来的值，用来确定需要显示的相关内容 */
-      for (let i = 0; i < this.list.length; i++) {
-        this.list[i].id = i
-      }
-      console.log(this.list[0].id)      
-      console.log(getSubjects)
-      console.log(apis._user.we)
-      
+         rdqId(课程编号)为后端传递过来的值，用来确定需要显示的相关内容 */
+      // for (let i = 0; i < this.list.length; i++) {
+      //   this.list.Arrid = i
+      // }
+      // console.log('list:'+this.list.length)
     }
     // 获取焦点
     changeFilter(e) {
       this.actived = {
         id: e.currentTarget.dataset.id,
-        lessonId: e.currentTarget.id,
+        rdqId: e.currentTarget.id,
         data: [
-          apis._user.we
+          // {rdqTheme: '如何提高学习效率？', rdqText: '这是一篇关于如何提高学习效力的文章。', rdqDate: '2018-1-15', lessonName: '创新创业课程', wbCcontenNum: '999'},
+          // {rdqTheme: '如何提高学习效率？', rdqText: '这是一篇关于如何提高学习效力的文章。', rdqDate: '2018-1-15', lessonName: '创新创业课程', wbCcontenNum: '999'},
+          // {rdqTheme: '如何提高学习效率？', rdqText: '这是一篇关于如何提高学习效力的文章。', rdqDate: '2018-1-15', lessonName: '创新创业课程', wbCcontenNum: '999'},
+          // {rdqTheme: '如何提高学习效率？', rdqText: '这是一篇关于如何提高学习效力的文章。', rdqDate: '2018-1-15', lessonName: '创新创业课程', wbCcontenNum: '999'},
+          // {rdqTheme: '如何提高学习效率？', rdqText: '这是一篇关于如何提高学习效力的文章。', rdqDate: '2018-1-15', lessonName: '创新创业课程', wbCcontenNum: '999'}
         ],
         showMore: true,
         remind: '上滑加载更多'
       }
       this.$apply()
+      this.getSubjectsList(e.currentTarget.dataset.id)
+    }
+    // 当数据处理完时停止页面下拉刷新
+    onPullDownRefresh() {
+      console.log('执行到这里')
+      wx.stopPullDownRefresh()
     }
   }
 </script>

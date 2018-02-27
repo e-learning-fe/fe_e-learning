@@ -6,15 +6,18 @@ const apis = {
     //微信数据
     wx: {},
     //学生\老师数据
-    we: {
-      stuInfo:{},
-      subjectList:{}
-    }
+    we: {},
+    stuInfo: {},
+    subjectListTags: {},
+    subjectList: {}
   },
   cache: {},
   key (data) {
     return util.key(data)
   },
-  _time: {} // 当前学期周数
+  _time: {}, // 当前学期周数
+  globalData : {
+    refreshFlag : false
+  }
 }
 export default apis
