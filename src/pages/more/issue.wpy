@@ -36,7 +36,7 @@
           </view>
         </view>
       </block>
-      <text wx:else class="issues-remind text-center">{{list_remind}}</text>
+      <text class="issues-remind text-center">{{list_remind}}</text>
     </view>
     <block wx:else>
       <!-- 反馈内容 -->
@@ -76,9 +76,12 @@ import apis from "../../config/apis";
 import configs from "../../config";
 export default class Issue extends wepy.page {
   data = {
+    list_remind: '加载中...',
     list: {
-      count: 1,
-      status: false
+      count: "-",
+      status: false,
+      data: [],
+      open: 0
     },
     title: "",
     content: "",
@@ -89,15 +92,16 @@ export default class Issue extends wepy.page {
     uploading: false,
     qiniu: "",
     showError: false,
-    // imgs: []
   };
+  // 获取用户手机信息跟token
   async onLoad() {
     if (apis.g_status) {
       return;
     }
     let networkType = await wepy.getNetworkType(),
       sysInfo = {},
-      token = {};
+      token = {},
+      reply = {};
     console.log(networkType);
     if (networkType) {
       sysInfo = await wepy.getSystemInfo();
@@ -133,6 +137,27 @@ export default class Issue extends wepy.page {
         // console.log(this.info);
       }
     }
+    reply = await wepy.request({
+      url: `${apis._server}/learningsystem/Issues/queryIssues`,
+      method: 'GET',
+      data: {
+        openid: apis._user.openid
+      }
+    })
+    console.log(reply)
+    if (reply.statusCode === 200) {
+      let list = reply.data.data;
+      if (list && list.length) {
+        this.list.count = list.length;
+        this.list.data = list;
+        this.list_remind = '';
+        this.$apply();
+      } else {
+        this.list_remind = "暂无反馈记录";
+        this.list.count = 0;
+        this.$apply();
+      }
+    } 
     wepy.showNavigationBarLoading();
     token = await wepy.request({
       url: `${apis._server}/learningsystem/Qiniu/getUploadToken`,
@@ -151,12 +176,14 @@ export default class Issue extends wepy.page {
       console.log(this);
     }
   }
+  // 打开列表
   openList() {
     if (this.list.count) {
       this.list.status = !this.list.status;
       this.$apply();
     }
   }
+  // 选择图片上传
   async choosePhoto() {
     let chooseConfirm = {},
       chooseImg = {},
@@ -187,6 +214,7 @@ export default class Issue extends wepy.page {
       }
     }
   }
+  // 上传单张图片到七牛
   async uploadImg(path) {
     if (apis.g_status) {
       apis.showErrorModal(apis.g_status, "上传失败");
@@ -238,6 +266,7 @@ export default class Issue extends wepy.page {
     this.$apply();
     console.log(this.content);
   }
+  // 提交反馈
   async submit() {
     let title = '', content = '', imgs = '';
     if (!this.title || !this.content) {
@@ -262,7 +291,7 @@ export default class Issue extends wepy.page {
     if (submitConfirm.confirm) {
       // console.log(submitConfirm.confirm)
       title = `【${apis._user.wx.nickName}】 ${this.title}`;
-      content = `${this.content}\r\n\r\n${this.info}`;
+      content = `${this.content}\r\n\r\n`;
       submitInfo = await wepy.request({
         url: `${apis._server}/learningsystem/Issues/submitIssues`,
         method: "POST",
@@ -273,19 +302,21 @@ export default class Issue extends wepy.page {
           openid: apis._user.openid,
           title: this.title,
           body: this.content,
-          details: "",
-          img_url: ""
+          details: this.info,
+          img_url: this.imgs
         }
       });
-      if (!submitInfo.statusCode == 200) {
+      if (submitInfo.statusCode == 200) {
+        wepy.showModal("提交成功");
         wepy.navigateBack();
       } else {
+        console.log(submitInfo.statusCode)
         configs.showErrorModal(submitInfo.errMsg, "提交失败");
       }
       console.log(submitInfo);
     }
   }
-
+  // 预览图片
   previewPhoto(e) {
     if(this.uploading){
       configs.showErrorModal('正在上传图片', '预览失败');

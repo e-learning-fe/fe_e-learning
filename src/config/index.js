@@ -103,7 +103,7 @@ const configs = {
       key: key
     });
   },
-
+  // 显示错误提示
   showErrorModal(content, title) {
     wepy.showModal({
       title: title || '加载失败',
@@ -111,7 +111,7 @@ const configs = {
       showCancel: false
     })
   },
-
+  // 显示转圈加载
   showLoadToast(title, duration){
     wepy.showToast({
       title: title || '加载中',
