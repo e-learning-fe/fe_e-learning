@@ -13,24 +13,23 @@
       <view class="loader">
         <image src="../../../images/index/loading.gif" wx-if="{{loading}}"></image>
       </view>
-      <block wx:for="{{actived.data}}" wx:key="item.rdqId">
-        <!-- 不显示 rdqId 为 all 的标签-->
-        <block wx:if="{{item.rdqId != 'all'}}">
-          <navigator url="./detail/detail">
-            <view class="list-item">
-              <text class="list-item-title">{{item.rdqTheme}}</text>
-              <text class="list-item-desc">{{item.rdqText}}</text>
-              <view class="list-item-bottom">
-                <text class="list-item-bottom-text">时间: {{item.rdqDate}}</text>
-                <text class="list-item-bottom-text">课程: {{item.lName}}</text>
-                <text class="list-item-bottom-text">回复数: {{item.wbCcontenNum}}</text>
-              </view>
+      <block wx:for="{{actived.data}}" wx:key="item.lNumber">
+        <!-- 不显示 lNumber 为 all 的标签-->
+        <!-- <block wx:if="{{item.lNumber != 'all'}}"> -->
+        <navigator url="./detail/detail">
+          <view class="list-item">
+            <text class="list-item-title">{{item.rdqTheme}}</text>
+            <text class="list-item-desc">{{item.rdqText}}</text>
+            <view class="list-item-bottom">
+              <text class="list-item-bottom-text">时间: {{item.rdqDate}}</text>
+              <text class="list-item-bottom-text">课程: {{item.lName}}</text>
+              <text class="list-item-bottom-text">回复数: {{item.wbCcontenNum}}</text>
             </view>
-          </navigator>
-        </block>
+          </view>
+        </navigator>
+        <!-- </block> -->
       </block>
     </view>
-
     <!-- 提醒消息 -->
     <text class="content-ending">{{actived.remind}}</text>
   </view>
@@ -40,11 +39,8 @@
   import wepy from 'wepy'
   import apis from '../../../config/apis.js'
   export default class Bbs extends wepy.page {
-    config = {
-
-    }
-
-        // bbs.js
+    config = {}
+    // bbs.js
     /**
      * Author: Huanda.Wu
      * Date: 2018.01.14
@@ -62,14 +58,15 @@
     async onLoad() {
       await this.getSubjectsList()
     }
-
-    async getSubjectsList(rdqId) {
+    async getSubjectsList(lNumber) {
       // 获取班级相应的课程标签 
       let getSubjectsTags = {}
       getSubjectsTags = await wepy.request({
         url: `${apis._server}/learningsystem/Lesson/findClassLesson`,
         method: 'GET',
-        header: {'content-type': 'application/x-www-form-urlencoded'},
+        header: {
+          'content-type': 'application/x-www-form-urlencoded'
+        },
         dataType: 'json',
         data: {
           cClassid: '1'
@@ -79,12 +76,43 @@
       console.log(getSubjectsTags.data)
       apis._user.subjectListTags = getSubjectsTags.data.data
       console.log(apis._user.subjectListTags)
-      if(getSubjectsTags.data.status || getSubjectsTags.data.status === 200){
-        this.list = [
-          {lNumber: 'all', lName: '全部', storage: []}
-        ]
+      if (getSubjectsTags.data.status || getSubjectsTags.data.status === 200) {
+        this.list = [{
+          lNumber: 'all',
+          lName: '全部',
+          storage: []
+        }]
         this.list.push(...apis._user.subjectListTags)
+        this.$apply()
       }
+      //获取话题列表
+      let getSubjects = {}
+      getSubjects = await wepy.request({
+        url: `${apis._server}/learningsystem/Releasediscussionquestions/selectRdqAndTag`,
+        method: 'GET',
+        header: {
+          'content-type': 'application/x-www-form-urlencoded'
+        },
+        dataType: 'json',
+        data: {}
+      })
+      console.log('话题列表')
+      console.log(getSubjects.data)
+      apis._user.subjectList = getSubjects.data.data
+      console.log(apis._user.subjectList)
+      //将获取到的话题列表缓存到相应的标签里面
+      for (let i = 0; i < apis._user.subjectList.length; i++) {
+        if (this.actived.lNumber == apis._user.subjectList[i].lNumber) {
+          for (let j = 0; j < this.list.length; j++) {
+            if (this.actived.lNumber == this.list[j].lNumber) {
+              this.list[j].storage = apis._user.subjectList
+              this.actived.data = this.list[j].storage
+            }
+          }
+        }
+      }
+      console.log(this.list)
+      console.log(this.actived.data)
     }
 
     // 获取焦点
@@ -230,19 +258,19 @@
     opacity: 0.8;
   }
   /*
-  .list-item-left {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    padding-right: 10rpx;
-  }
-  .list-item-icon {
-    flex: 0 0 60rpx;
-    height: 60rpx;
-    width: 60rpx;
-    border-left: 1px solid #fff;
-    padding-left: 25rpx;
-  }
-  */
+        .list-item-left {
+          flex: 1 1 auto;
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+          padding-right: 10rpx;
+        }
+        .list-item-icon {
+          flex: 0 0 60rpx;
+          height: 60rpx;
+          width: 60rpx;
+          border-left: 1px solid #fff;
+          padding-left: 25rpx;
+        }
+        */
 </style>
