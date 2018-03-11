@@ -11,13 +11,13 @@
       <block wx:if="{{list.count}}">
         <view wx:for="{{list.data}}" wx:key="id" class="issues-item {{index == list.open ? '' : 'close'}}" data-index="{{index}}" bindtap="openItem">
           <view class="item-hd">
-            <text class="btn-id">#{{item.issues}}</text>
+            <text class="btn-id">#{{item.isId}}</text>
             <block wx:if="{{index == list.open}}">
-              <view class="item-labels">
+              <!-- <view class="item-labels">
                 <text wx:for="{{item.content.labels}}" wx:key="id" wx:for-item="label" class="item-label">{{label.name}}</text>
-              </view>
-              <text class="item-status" wx:if="{{item.content.state == 'closed'}}">已解决</text>
-              <text class="item-status" wx:elif="{{item.content.state == 'open'}}">进行中</text>
+              </view> -->
+              <text class="item-status" wx:if="{{item.state == 'closed'}}">已解决</text>
+              <text class="item-status" wx:elif="{{item.state == 'open'}}">进行中</text>
             </block>
           </view>
           <text class="btn-text">{{item.title}}</text>
@@ -25,14 +25,14 @@
             <image class="btn-open-img" src="/images/core/common/down.png"></image>
           </view>
           <view class="item-bd" wx:else>
-            <text class="item-content">{{item_remind ? item_remind : item.content.body}}</text>
-            <view class="item-comment" wx:for="{{item.comments}}" wx:key="id" wx:for-item="comment">
+            <text class="item-content">{{item_remind ? item_remind : item.body}}</text>
+            <!-- <view class="item-comment" wx:for="{{item.comments}}" wx:key="id" wx:for-item="comment">
               <image class="item-comment-img" src="{{comment.user.avatar_url}}"></image>
               <view class="item-comment-bd">
                 <text class="item-comment-name">{{comment.user.login}}</text>
                 <text>{{comment.body}}</text>
               </view>
-            </view>
+            </view> -->
           </view>
         </view>
       </block>
@@ -145,20 +145,26 @@ export default class Issue extends wepy.page {
       }
     })
     console.log(reply)
-    if (reply.statusCode === 200) {
-      let list = reply.data.data;
-      if (list && list.length) {
-        this.list.count = list.length;
-        this.list.data = list;
-        this.list_remind = '';
-        this.$apply();
-      } else {
-        this.list_remind = "暂无反馈记录";
-        this.list.count = 0;
-        this.$apply();
-      }
-    } 
-    wepy.showNavigationBarLoading();
+    try {
+      if (reply.statusCode === 200) {
+        let list = reply.data.data;
+        if (list && list.length) {
+          this.list.count = list.length;
+          this.list.data = list;
+          this.list_remind = '';
+          this.$apply();
+        } else {
+          this.list_remind = "暂无反馈记录";
+          this.list.count = 0;
+          this.$apply();
+        }
+      } 
+    } catch (e) {
+      this.list_remind = "加载失败";
+      this.$apply();
+    } finally {
+      wepy.hideNavigationBarLoading();
+    }
     token = await wepy.request({
       url: `${apis._server}/learningsystem/Qiniu/getUploadToken`,
       method: "GET",
@@ -238,8 +244,16 @@ export default class Issue extends wepy.page {
     try {
       if (imgurl) {
         console.log(JSON.parse(imgurl.data));
-        let imgUrl = JSON.parse(imgurl.data);
-        this.imgs.push(`http://p328nzenm.bkt.clouddn.com/${imgUrl.key}`);
+        let imgUrl = JSON.parse(imgurl.data),
+          trueUrl = `http://p328nzenm.bkt.clouddn.com/${imgUrl.key}`;
+        if (this.imgs.indexOf(trueUrl) == -1) {
+          this.imgs.push(trueUrl);
+        } else {
+          configs.showErrorModal('不能传两张一样的图片哦!', '温馨提示');
+          this.imgLen -= 1;
+          this.uploading = false;
+          this.$apply();
+        }
         this.$apply();
         console.log(this.imgs);
       }
@@ -306,9 +320,15 @@ export default class Issue extends wepy.page {
           img_url: this.imgs
         }
       });
+      await configs.showLoadToast("正在提交");
       if (submitInfo.statusCode == 200) {
-        wepy.showModal("提交成功");
-        wepy.navigateBack();
+        await wepy.showToast({
+          title: '提交成功',
+          icon: 'success',
+          duration: 1500
+        })
+        // console.log(a)
+        await wepy.navigateBack();
       } else {
         console.log(submitInfo.statusCode)
         configs.showErrorModal(submitInfo.errMsg, "提交失败");
@@ -326,6 +346,29 @@ export default class Issue extends wepy.page {
       current: this.imgs[e.target.dataset.index],
       urls: this.imgs
     })
+  }
+
+  getIssue(index) {
+    let thedata = this.list.data[index];
+    // console.log(thedata);
+    if (!thedata.content) {
+      this.item_remind = "加载中";
+      this.$apply();
+    } else {
+      return ;
+    }
+    // wepy.showNavigationBarLoading();
+  }
+  openItem(e) {
+    // console.log(e.currentTarget.dataset.index)
+    let index = e.currentTarget.dataset.index,
+      list = this.list;
+    console.log(this.list.data)
+    if(index != list.open) {
+      this.getIssue(index);
+      this.list.open = index;
+      this.$apply();
+    }
   }
 }
 </script>
@@ -426,7 +469,7 @@ export default class Issue extends wepy.page {
   margin-right: 10rpx;
 }
 .issues-item.close .btn-text {
-  flex: 1 1 auto;
+  flex: 1;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
