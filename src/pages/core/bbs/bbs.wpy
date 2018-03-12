@@ -56,7 +56,7 @@
       }
     }
     async onLoad() {
-      await this.getSubjectsList()
+      await this.getSubjectsList('all')
     }
     async getSubjectsList(lNumber) {
       // 获取班级相应的课程标签 
@@ -72,10 +72,10 @@
           cClassid: '1'
         }
       })
-      console.log('课程标签')
-      console.log(getSubjectsTags.data)
-      apis._user.subjectListTags = getSubjectsTags.data.data
-      console.log(apis._user.subjectListTags)
+      // console.log('课程标签')
+      // console.log(getSubjectsTags.data)
+      apis._user.subjectListTags = getSubjectsTags.data.data;
+      // console.log(apis._user.subjectListTags)
       if (getSubjectsTags.data.status || getSubjectsTags.data.status === 200) {
         this.list = [{
           lNumber: 'all',
@@ -96,26 +96,29 @@
         dataType: 'json',
         data: {}
       })
-      console.log('话题列表')
-      console.log(getSubjects.data)
+      // console.log('话题列表')
+      // console.log(getSubjects.data)
       apis._user.subjectList = getSubjects.data.data
-      console.log(apis._user.subjectList)
+      // console.log(apis._user.subjectList)
       //将获取到的话题列表缓存到相应的标签里面
+      console.log('testttt')
+      console.log(apis._user.subjectList)
+      
+      if (this.actived.lNumber == 'all') {
+        this.actived.data = apis._user.subjectList;
+      }
       for (let i = 0; i < apis._user.subjectList.length; i++) {
+        // let idx = apis._user.subjectList[i].lNumber;
+        console.log(`${i}      ${apis._user.subjectList[i].lNumber}  ${this.actived.lNumber}`)
         if (this.actived.lNumber == apis._user.subjectList[i].lNumber) {
-          for (let j = 0; j < this.list.length; j++) {
-            if (this.actived.lNumber == this.list[j].lNumber) {
-              this.list[j].storage = apis._user.subjectList
-              this.actived.data = this.list[j].storage
-            }
-          }
+          this.actived.data = [...this.actived.data, apis._user.subjectList[i]]
         }
-      } 
+      }
       this.$apply()
       console.log(this.list)
       console.log(this.actived)
     }
-
+    
     // 获取焦点
     changeFilter(e) {
       this.actived = {
@@ -133,6 +136,7 @@
       }
       this.$apply()
       this.getSubjectsList(e.currentTarget.dataset.id)
+      console.log(this.data)
     }
   }
 </script>
