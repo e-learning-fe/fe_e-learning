@@ -11,7 +11,7 @@
     <!-- 话题列表 -->
     <view class="content">
       <view class="loader">
-        <image src="../../../images/index/loading.gif" wx-if="{{loading}}"></image>
+        <image src="../../../images/index/loading.gif" wx-if="{{loading}}" />
       </view>
       <block wx:for="{{actived.data}}" wx:key="item.lNumber">
         <!-- 不显示 lNumber 为 all 的标签-->
@@ -110,9 +110,10 @@
             }
           }
         }
-      }
+      } 
+      this.$apply()
       console.log(this.list)
-      console.log(this.actived.data)
+      console.log(this.actived)
     }
 
     // 获取焦点
