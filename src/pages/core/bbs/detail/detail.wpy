@@ -13,7 +13,7 @@
     </view>
     <view class="reply-box">
       <view class="reply-hd">
-        <image class="reply-hd-avatar" src="{{userAvatar}}"></image>
+        <image class="reply-hd-avatar" src="{{userAvatar}}" />>
         <text class="reply-hd-name">Howard</text>
         <text class="info">2018-01-15 14:54:00</text>
       </view>
