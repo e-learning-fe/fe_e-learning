@@ -15,8 +15,7 @@
       </view>
       <block wx:for="{{actived.data}}" wx:key="item.lNumber">
         <!-- 不显示 lNumber 为 all 的标签-->
-        <!-- <block wx:if="{{item.lNumber != 'all'}}"> -->
-        <navigator url="./detail/detail">
+        <navigator url="./detail/detail?rdqId={{item.rdqId}}&rdqTheme={{item.rdqTheme}}&rdqText={{item.rdqText}}&rdqDate={{item.rdqDate}}&lName={{item.lesson.lName}}&rdqAuthor={{student.stuName}}">
           <view class="list-item">
             <text class="list-item-title">{{item.rdqTheme}}</text>
             <text class="list-item-desc">{{item.rdqText}}</text>
@@ -27,7 +26,6 @@
             </view>
           </view>
         </navigator>
-        <!-- </block> -->
       </block>
     </view>
     <!-- 提醒消息 -->
@@ -101,36 +99,29 @@
       apis._user.subjectList = getSubjects.data.data
       // console.log(apis._user.subjectList)
       //将获取到的话题列表缓存到相应的标签里面
-      console.log('testttt')
       console.log(apis._user.subjectList)
-      
-      if (this.actived.lNumber == 'all') {
-        this.actived.data = apis._user.subjectList;
-      }
-      for (let i = 0; i < apis._user.subjectList.length; i++) {
-        // let idx = apis._user.subjectList[i].lNumber;
-        console.log(`${i}      ${apis._user.subjectList[i].lNumber}  ${this.actived.lNumber}`)
-        if (this.actived.lNumber == apis._user.subjectList[i].lNumber) {
-          this.actived.data = [...this.actived.data, apis._user.subjectList[i]]
+      if (getSubjects.data.status || getSubjects.data.status === 200) {
+        if (this.actived.lNumber == 'all') {
+          this.actived.data = apis._user.subjectList;
+        }
+        for (let i = 0; i < apis._user.subjectList.length; i++) {
+          // let idx = apis._user.subjectList[i].lNumber;
+          console.log(`${i}      ${apis._user.subjectList[i].lNumber}  ${this.actived.lNumber}`)
+          if (this.actived.lNumber == apis._user.subjectList[i].lNumber) {
+            this.actived.data = [...this.actived.data, apis._user.subjectList[i]]
+          }
         }
       }
       this.$apply()
       console.log(this.list)
       console.log(this.actived)
     }
-    
     // 获取焦点
     changeFilter(e) {
       this.actived = {
         id: e.currentTarget.dataset.id,
         lNumber: e.currentTarget.id,
-        data: [
-          // {rdqTheme: '如何提高学习效率？', rdqText: '这是一篇关于如何提高学习效力的文章。', rdqDate: '2018-1-15', lessonName: '创新创业课程', wbCcontenNum: '999'},
-          // {rdqTheme: '如何提高学习效率？', rdqText: '这是一篇关于如何提高学习效力的文章。', rdqDate: '2018-1-15', lessonName: '创新创业课程', wbCcontenNum: '999'},
-          // {rdqTheme: '如何提高学习效率？', rdqText: '这是一篇关于如何提高学习效力的文章。', rdqDate: '2018-1-15', lessonName: '创新创业课程', wbCcontenNum: '999'},
-          // {rdqTheme: '如何提高学习效率？', rdqText: '这是一篇关于如何提高学习效力的文章。', rdqDate: '2018-1-15', lessonName: '创新创业课程', wbCcontenNum: '999'},
-          // {rdqTheme: '如何提高学习效率？', rdqText: '这是一篇关于如何提高学习效力的文章。', rdqDate: '2018-1-15', lessonName: '创新创业课程', wbCcontenNum: '999'}
-        ],
+        data: [],
         showMore: true,
         remind: '上滑加载更多'
       }
@@ -263,19 +254,19 @@
     opacity: 0.8;
   }
   /*
-        .list-item-left {
-          flex: 1 1 auto;
-          display: flex;
-          flex-direction: column;
-          overflow: hidden;
-          padding-right: 10rpx;
-        }
-        .list-item-icon {
-          flex: 0 0 60rpx;
-          height: 60rpx;
-          width: 60rpx;
-          border-left: 1px solid #fff;
-          padding-left: 25rpx;
-        }
-        */
+          .list-item-left {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding-right: 10rpx;
+          }
+          .list-item-icon {
+            flex: 0 0 60rpx;
+            height: 60rpx;
+            width: 60rpx;
+            border-left: 1px solid #fff;
+            padding-left: 25rpx;
+          }
+          */
 </style>

@@ -10,7 +10,8 @@ const apis = {
     stuInfo: {},
     subjectListTags: {},
     subjectList: {},
-    myInfo: {}
+    myInfo: {},
+    getReplyLists: {}
   },
   cache: {},
   key (data) {
