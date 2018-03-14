@@ -11,7 +11,7 @@
       <view class="detail">
         <text>{{rdqText}}</text>
       </view>
-      <navigator class="reply-btn">我来回答</navigator>
+      <navigator class="reply-btn" url="./reply?rdqId={{this.rdqId}}&rdqTheme={{this.rdqTheme}}">我来回答</navigator>
     </view>
     <!-- </block> -->
     <view class="reply-box">
@@ -24,7 +24,7 @@
         <view class="reply-content">
           <text>{{item.wbContent}}</text>
         </view>
-        <text class="reply-floor">1#</text>
+        <text class="reply-floor">{{flooor}}#</text>
       </block>
     </view>
   </view>
@@ -38,7 +38,6 @@
     // bbs_detail.js
     /**
      * Author: Huanda.Wu
-     * Date: 2018.01.15
      */
     data = {
       // remind: '加载中',
@@ -51,7 +50,8 @@
       wbUploadfile_len: '', //附件数量
       wbUploadfile_list: [],
       wbUploadfile_loading: false, //附件下载状态
-      list: []
+      list: [],
+      flooor: 0
     }
     async onLoad(options) {
       // this.setData({
@@ -83,10 +83,11 @@
       apis._user.getReplyList = getReplyList.data.data
       console.log('回复列表')
       console.log(apis._user.getReplyList)
-      // if (getReplyList.data.status || getReplyList.data.status === 200) {
-      this.list = apis._user.getReplyList
-      this.$apply()
-      // }
+      if (getReplyList.data.status || getReplyList.data.status === 200) {
+        this.list = apis._user.getReplyList
+        this.flooor += 1
+        this.$apply()
+      }
     }
   }
 </script>
@@ -147,7 +148,7 @@
   .reply-hd {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     width: 100%;
     padding: 10rpx 0;
