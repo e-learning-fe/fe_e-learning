@@ -10,9 +10,9 @@
     </scroll-view>
     <!-- 话题列表 -->
     <view class="content">
-      <!-- <view class="loader">
-            <image src="../../../images/index/loading.gif" wx-if="{{loading}}" />
-          </view> -->
+      <view class="loader">
+        <image src="../../../images/index/loading.gif" wx-if="{{loading}}" />
+      </view>
       <block wx:for="{{actived.data}}" wx:key="item.lNumber">
         <navigator url="./detail/detail?rdqId={{item.rdqId}}&rdqTheme={{item.rdqTheme}}&rdqText={{item.rdqText}}&rdqDate={{item.rdqDate}}&lName={{item.lesson.lName}}&rdqAuthor={{student.stuName}}">
           <view class="list-item">
@@ -54,20 +54,21 @@
         // showMore: true,
         // remind: '上滑加载更多'
       },
-      // loading: false
+      loading: false
     }
     async onLoad() {
       await this.getSubjectsList('all')
     }
     // 下拉更新
     onPullDownRefresh() {
-      // this.loading = true
+      this.loading = true
       this.actived.data = []
       // this.actived.showMore = true
       // this.actived.remind = '上滑加载更多'
       // this.page = 0
       this.$apply()
       this.getSubjectsList()
+      wx.stopPullDownRefresh()
     }
     /*
     // 上滑加载更多
@@ -220,8 +221,8 @@
     padding-top: 40rpx;
   }
   .loader image {
-    height: 80rpx;
-    width: 80rpx;
+    height: 160rpx;
+    width: 160rpx;
   }
   .content {
     display: flex;
@@ -283,19 +284,19 @@
     opacity: 0.8;
   }
   /*
-  .list-item-left {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    padding-right: 10rpx;
-  }
-  .list-item-icon {
-    lex: 0 0 60rpx;
-    height: 60rpx;
-    idth: 60rpx;
-    border-left: 1px solid #fff;
-    padding-left: 25rpx;
-  }
-  */
+    .list-item-left {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding-right: 10rpx;
+    }
+    .list-item-icon {
+      lex: 0 0 60rpx;
+      height: 60rpx;
+      idth: 60rpx;
+      border-left: 1px solid #fff;
+      padding-left: 25rpx;
+    }
+    */
 </style>

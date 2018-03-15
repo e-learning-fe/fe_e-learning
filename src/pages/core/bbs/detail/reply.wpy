@@ -1,12 +1,12 @@
 <template>
   <view class="container">
     <text class="header">{{rdqTheme}}</text>
-    <textarea class="content" placeholder="请输入需要回复的内容" placeholder-style="color:#ccc;" maxlength=500 auto-focus auto-height></textarea>
+    <textarea class="content" placeholder="请输入需要回复的内容" placeholder-style="color:#ccc;" maxlength="{{textMaxLen}}" auto-focus auto-height @input="bindWordLimit"></textarea>
     <view class="bottom-box">
       <label class="checkbox">
             <switch />是否匿名
           </label>
-      <text>还可以输入个字</text>
+      <text>还可以输入 {{limitTextLen}} 个字</text>
     </view>
     <view class="btn-box">
       <view class="confirm-btn">发送</view>
@@ -31,14 +31,26 @@
       rdqId: '', // 话题ID
       rdqTheme: '', // 话题主题
       stuStudentid: '', // 学生学号
-      wbContent: '' //回复的内容
+      wbContent: '', // 回复的内容
+      textMaxLen: '500', // 最多输入字数
+      limitTextLen: '500', // 还可以输入的字数
     }
     async onLoad(options) {
       this.rdqId = options.rdqId
       this.rdqTheme = options.rdqTheme
-      this.stuStudentid = options.stuStudentid
-      // this.$apply()
+      this.stuStudentid = apis._user.myInfo.stuStudentid
     }
+
+    methods = {
+      // 字数限制
+      bindWordLimit(e) {
+        let value = e.detail.value, len = parseInt(value.length)
+        if(len > this.textMaxLen) return
+        this.limitTextLen = this.textMaxLen - len
+      }
+      
+    }
+
   }
 </script>
 
@@ -56,7 +68,7 @@
     justify-content: center;
     align-items: center;
   }
-  .content {
+  .content{
     font-size: 12pt;
     width: 100%;
     min-height: 200rpx;

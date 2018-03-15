@@ -24,7 +24,7 @@
         <view class="reply-content">
           <text>{{item.wbContent}}</text>
         </view>
-        <text class="reply-floor">{{flooor}}#</text>
+        <!-- <text class="reply-floor">{{item.data}}#</text> -->
       </block>
     </view>
   </view>
@@ -51,7 +51,8 @@
       wbUploadfile_list: [],
       wbUploadfile_loading: false, //附件下载状态
       list: [],
-      pageNum: 1
+      pageNum: 1,
+      flooor: []
     }
     async onLoad(options) {
       // this.setData({
@@ -85,7 +86,6 @@
       console.log(apis._user.getReplyList)
       if (getReplyList.data.status || getReplyList.data.status === 200) {
         this.list = apis._user.getReplyList
-        this.flooor += 1
         this.$apply()
       }
     }
