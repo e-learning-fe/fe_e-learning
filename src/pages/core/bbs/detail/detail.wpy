@@ -11,7 +11,7 @@
       <view class="detail">
         <text>{{rdqText}}</text>
       </view>
-      <navigator class="reply-btn" url="./reply?rdqId={{this.rdqId}}&rdqTheme={{this.rdqTheme}}">我来回答</navigator>
+      <navigator class="reply-btn" url="./reply?rdqId={{rdqId}}&rdqTheme={{rdqTheme}}">我来回答</navigator>
     </view>
     <!-- </block> -->
     <view class="reply-box">
@@ -51,7 +51,7 @@
       wbUploadfile_list: [],
       wbUploadfile_loading: false, //附件下载状态
       list: [],
-      flooor: 0
+      pageNum: 1
     }
     async onLoad(options) {
       // this.setData({
@@ -63,7 +63,6 @@
       this.rdqDate = options.rdqDate
       this.lName = options.lName
       this.rdqAuthor = options.stuName
-      this.$apply()
       await this.getReplyLists()
     }
     async getReplyLists() {
@@ -77,7 +76,8 @@
         },
         dataType: "json",
         data: {
-          rdqId: this.rdqId
+          rdqId: this.rdqId,
+          pageNum: this.pageNum
         }
       })
       apis._user.getReplyList = getReplyList.data.data
