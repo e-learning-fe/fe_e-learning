@@ -1,7 +1,7 @@
 <template>
   <view class="container">
     <text class="header">{{rdqTheme}}</text>
-    <textarea class="content" placeholder="请输入需要回复的内容" placeholder-style="color:#ccc;" maxlength="{{textMaxLen}}" auto-focus auto-height @input="bindWordLimit"></textarea>
+    <textarea class="content" placeholder="请输入需要回复的内容" placeholder-style="color:#ccc;" maxlength="{{textMaxLen}}" auto-focus auto-height @input="bindWordLimit" @blur="bindBlur"></textarea>
     <view class="bottom-box">
       <label class="checkbox">
             <switch />是否匿名
@@ -9,7 +9,7 @@
       <text>还可以输入 {{limitTextLen}} 个字</text>
     </view>
     <view class="btn-box">
-      <view class="confirm-btn">发送</view>
+      <view class="confirm-btn" @tap="bindReply">发送</view>
     </view>
   </view>
 </template>
@@ -41,14 +41,40 @@
       this.stuStudentid = apis._user.myInfo.stuStudentid
     }
 
+    async toReply(){
+      let reply = {}
+      reply = await wepy.request({
+        url: `${apis._server}/learningsystem/Writeback/replyMessage`,
+        method: "GET",
+        header: {
+          "content-type": "application/x-www-form-urlencoded"
+        },
+        dataType: "json",
+        data: {
+          rdqId: this.rdqId,
+          stuStudentid: this.stuStudentid,
+          wbContent: this.wbContent
+        }
+      })
+      console.log(reply.data)
+    }
+
+    
+
     methods = {
       // 字数限制
       bindWordLimit(e) {
         let value = e.detail.value, len = parseInt(value.length)
         if(len > this.textMaxLen) return
         this.limitTextLen = this.textMaxLen - len
+      },
+      // 当输入框失焦时存储内容
+      binBlur(e){
+        this.wbContent = e.detail.value
+      },
+      bindReply(e) {
+        toReply()
       }
-      
     }
 
   }
