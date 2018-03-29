@@ -86,6 +86,11 @@ export default class Issue extends wepy.page {
     qiniu: "",
     showError: false,
   };
+  config = {
+    navigationBarTitleText: "反馈",
+    navigationBarBackgroundColor: '#ffffff',
+    navigationBarTextStyle: 'black'
+  }
   // 获取用户手机信息跟token
   async onLoad() {
     if (apis.g_status) {

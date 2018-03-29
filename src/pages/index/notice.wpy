@@ -1,9 +1,17 @@
 <template>
-  <div>
-    <text>xxx老师</text>
-    <text>{{date}}</text>
-    <text>{{content}}</text>
-  </div>
+  <view class="notice-container">
+    <view class="header">
+      <view class="title">
+        {{name}}老师:
+      </view>
+      <text class="time">
+        {{date}}
+      </text>
+    </view>
+    <view class="content">
+      {{content}}
+    </view>
+  </view>
 </template>
 
 <script>
@@ -13,11 +21,40 @@ export default class Notice extends wepy.page {
     name: "xxx",
     date: "2018年1月1日",
     content:
-      "内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试"
+      "内容测试内容测试内容测试内容测试内容内容测试内容测试内容测试内容测试内容容测试内容内容测试内容测试内容测试内容测试内容"
   };
+  config = {
+    navigationBarTitleText: "教师信息",
+    navigationBarBackgroundColor: '#ffffff',
+    navigationBarTextStyle: 'black'
+  }
 }
 </script>
 
-<style scoped>
-
+<style lang="less">
+.header {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  color: #000;
+  background-color: #fff;
+  padding: 10px;
+  box-sizing: border-box;
+  .title {
+    font-size: 22px;
+  }
+  .time {
+    font-size: 12px;
+    align-self: flex-start;
+  }
+}
+.content {
+  text-indent: 40rpx;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+  line-height: 1.6;
+}
 </style>
