@@ -1,6 +1,6 @@
 import wepy from 'wepy'
 import apis from './apis.js'
-import util from '../utils/base64.min.js'
+// import util from '../utils/base64.min.js'
 const configs = {
   // 获取用户信息
   async getUserInfo() {
@@ -41,9 +41,6 @@ const configs = {
       wepy.hideNavigationBarLoading()
       console.log(userinfo.data.data)
 
-      // _this.saveCache('_session', userinfo.data.data.session)
-      // console.log(userinfo.data.data.is_bind)
-
       // 将信息储存到apis里面
 
       // 用户基本信息 + 后台获取的数据
@@ -70,9 +67,7 @@ const configs = {
         // console.log(apis)
         // _this.processData(userinfo.data);
       }
-      console.log('hehe'+apis._user.is_bind)
       if(!apis._user.is_bind){
-        console.log('usb')
         wepy.navigateTo({
           url: '/pages/more/login'
         })

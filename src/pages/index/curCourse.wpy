@@ -1,0 +1,21 @@
+<template>
+  <div>
+    {{name}}
+    {{content}}
+  </div>
+</template>
+
+<script>
+import wepy from "wepy";
+export default class CurCourse extends wepy.page {
+  data = {
+    name: "网页设计基础",
+    content:
+      "内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试"
+  };
+}
+</script>
+
+<style scoped>
+
+</style>

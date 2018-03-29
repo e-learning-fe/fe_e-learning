@@ -26,13 +26,6 @@
           </view>
           <view class="item-bd" wx:else>
             <text class="item-content">{{item_remind ? item_remind : item.body}}</text>
-            <!-- <view class="item-comment" wx:for="{{item.comments}}" wx:key="id" wx:for-item="comment">
-              <image class="item-comment-img" src="{{comment.user.avatar_url}}"></image>
-              <view class="item-comment-bd">
-                <text class="item-comment-name">{{comment.user.login}}</text>
-                <text>{{comment.body}}</text>
-              </view>
-            </view> -->
           </view>
         </view>
       </block>
@@ -60,7 +53,7 @@
           </view>
         </view>
       </block>
-
+      <!-- 温馨提示 -->
       <text class="issues-remind"> 您的反馈将会发到广科学习平台的后台，我们在看到您的后台后会及时回复，您可以在反馈页面进行查询;另外你还可以加入用户反馈群进行反馈。 注:频繁恶意反馈的用户将会取消其反馈资格。
       </text>
       <view class="submit-btn {{uploading?'disabled':''}}" bindtap="submit">
@@ -102,10 +95,8 @@ export default class Issue extends wepy.page {
       sysInfo = {},
       token = {},
       reply = {};
-    console.log(networkType);
     if (networkType) {
       sysInfo = await wepy.getSystemInfo();
-      console.log(sysInfo);
       if (sysInfo) {
         let info = "---\r\n**用户信息**\r\n";
         info += "用户名：" + apis._user.wx.nickName;
@@ -131,12 +122,11 @@ export default class Issue extends wepy.page {
         info += "\r\n小程序版本号：" + apis.version;
         info += "\r\n基础库版本：" + sysInfo.SDKVersion;
         info += "\r\n网络类型：" + networkType.networkType;
-        // console.log(info);
         this.info = info;
         this.$apply();
-        // console.log(this.info);
       }
     }
+    // 获取反馈记录
     reply = await wepy.request({
       url: `${apis._server}/learningsystem/Issues/queryIssues`,
       method: 'GET',
@@ -144,7 +134,6 @@ export default class Issue extends wepy.page {
         openid: apis._user.openid
       }
     })
-    console.log(reply)
     try {
       if (reply.statusCode === 200) {
         let list = reply.data.data;
@@ -165,6 +154,7 @@ export default class Issue extends wepy.page {
     } finally {
       wepy.hideNavigationBarLoading();
     }
+    // 获取七牛服务器上传图片权限
     token = await wepy.request({
       url: `${apis._server}/learningsystem/Qiniu/getUploadToken`,
       method: "GET",
@@ -173,16 +163,14 @@ export default class Issue extends wepy.page {
         fileUse: "issue"
       }
     });
-    // console.log(token)
     if (token.statusCode === 200) {
       console.log(token);
       this.upload = true;
       this.qiniu = token.data.data.token;
       this.$apply();
-      console.log(this);
     }
   }
-  // 打开列表
+  // 打开反馈列表
   openList() {
     if (this.list.count) {
       this.list.status = !this.list.status;
@@ -200,12 +188,10 @@ export default class Issue extends wepy.page {
       confirmText: "继续"
     });
     if (chooseConfirm.confirm) {
-      // console.log(chooseConfirm.confirm);
       chooseImg = await wepy.chooseImage({
         count: 4,
         sourceType: ["album"]
       });
-      // console.log(chooseImg)
       if (chooseImg) {
         let tempFilePaths = chooseImg.tempFilePaths,
           imgLen = tempFilePaths.length;
@@ -240,12 +226,11 @@ export default class Issue extends wepy.page {
         token: this.qiniu
       }
     });
-    console.log(imgurl);
     try {
       if (imgurl) {
-        console.log(JSON.parse(imgurl.data));
         let imgUrl = JSON.parse(imgurl.data),
           trueUrl = `http://p328nzenm.bkt.clouddn.com/${imgUrl.key}`;
+        // 对本地相同图片上传时的处理
         if (this.imgs.indexOf(trueUrl) == -1) {
           this.imgs.push(trueUrl);
         } else {
@@ -270,11 +255,12 @@ export default class Issue extends wepy.page {
       wepy.hideNavigationBarLoading();
     }
   }
+  // 储存反馈标题输入内容
   listenerTitle(e) {
     this.title = e.detail.value;
     this.$apply();
-    // console.log(this.title)
   }
+  // 储存反馈内容输入内容
   listenerTextarea(e) {
     this.content = e.detail.value;
     this.$apply();
@@ -357,10 +343,9 @@ export default class Issue extends wepy.page {
     } else {
       return ;
     }
-    // wepy.showNavigationBarLoading();
   }
+  // 展开反馈过的内容
   openItem(e) {
-    // console.log(e.currentTarget.dataset.index)
     let index = e.currentTarget.dataset.index,
       list = this.list;
     console.log(this.list.data)

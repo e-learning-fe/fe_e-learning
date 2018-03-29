@@ -1,8 +1,10 @@
 <template>
   <view class="container" style="background-color: #f6f6f6;">
+    <!-- 加载动画 -->
     <view class="remind-box" wx:if="{{remind}}">
       <image class="remind-img" src="/images/index/loading.gif"></image>
     </view>
+    <!--  -->
     <block wx:else>
       <view class="content">
         <view class="bd">
@@ -57,10 +59,6 @@
     }
     onReady() {
       setTimeout(async() => {
-        // await this.setData({
-        //   remind: ''
-        // })
-        console.log(this['remind'])
         this.remind = ''
         this.$apply()
       }, 1000);
@@ -70,14 +68,13 @@
         this.phone = userinfo.stuPhoner
         this.qq = userinfo.stuQq
         this.we = userinfo.stuWechat
-        console.log('ye')
       }
     }
 
     onLoad() {
-      // let myInfo = apis._user.myInfo
 
     }
+    // 完善信息
     async append() {
       let appendInfo = {}
       if (apis.g_status) {
@@ -112,33 +109,32 @@
           duration: 1500
         })
       }
-      console.log(appendInfo)
     }
+    // 添加获取焦点样式
     inputFocus(e) {
       let id = e.target.id
       this[id+'_focus'] = true
-      console.log(id+'   '+this[id+'_focus'])
     }
+    // 添加失去焦点样式
     inputBlur(e) {
       let id = e.target.id
       this[id+'_focus'] = false
-      console.log(id+ '    ' +this[id+'_focus'])
     }
+    // 获取邮箱输入内容
     emailInput(e) {
       this.email = e.detail.value
-      console.log(this.email)
     }
+    // 获取手机输入内容
     phoneInput(e) {
       this.phone = e.detail.value
-      console.log(this.phone)
     }
+    // 获取qq输入内容
     qqInput(e) {
       this.qq = e.detail.value
-      console.log(this.qq)
     }
+    // 获取微信输入内容
     weInput(e) {
       this.we = e.detail.value
-      console.log(this.we)
     }
    
   }
