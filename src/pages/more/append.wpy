@@ -1,8 +1,10 @@
 <template>
   <view class="container" style="background-color: #f6f6f6;">
+    <!-- 加载动画 -->
     <view class="remind-box" wx:if="{{remind}}">
       <image class="remind-img" src="/images/index/loading.gif"></image>
     </view>
+    <!--  -->
     <block wx:else>
       <view class="content">
         <view class="bd">
@@ -24,8 +26,8 @@
               <input type="text" cursor-spacing="30" id="we" placeholder="请输入微信号" value="{{we}}" bindinput="weInput" bindfocus="inputFocus" bindblur="inputBlur" />
             </view>
             <view class="confirm-btn" bindtap="append">
-            <text>完善信息</text>
-          </view>
+              <text>完善信息</text>
+            </view>
           </form>
         </view>
       </view>
@@ -34,124 +36,116 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
-  import apis from '../../config/apis.js'
-  import configs from '../../config'
-  export default class Append extends wepy.page {
-    config = {
-      // append.json
-      navigationBarTitleText: '完善信息'
+import wepy from "wepy";
+import apis from "../../config/apis.js";
+import configs from "../../config";
+export default class Append extends wepy.page {
+  config = {
+    // append.json
+    navigationBarTitleText: "完善信息",
+    navigationBarBackgroundColor: "#ffffff",
+    navigationBarTextStyle: "black"
+  };
+  data = {
+    remind: "加载中",
+    email_focus: false,
+    phone_focus: false,
+    qq_focus: false,
+    we_focus: false,
+    email: "",
+    phone: "",
+    qq: "",
+    we: "",
+    types: "student"
+  };
+  onReady() {
+    setTimeout(async () => {
+      this.remind = "";
+      this.$apply();
+    }, 1000);
+    let userinfo = apis._user.myInfo;
+    if (userinfo.stuEmail && userinfo.stuPhoner && userinfo.stuQq) {
+      this.email = userinfo.stuEmail;
+      this.phone = userinfo.stuPhoner;
+      this.qq = userinfo.stuQq;
+      this.we = userinfo.stuWechat;
     }
-    data = {
-      remind: '加载中',
-      email_focus: false,
-      phone_focus: false,
-      qq_focus: false,
-      we_focus: false,
-      email: '',
-      phone: '',
-      qq: '',
-      we: '',
-      types: 'student',
-      
-    }
-    onReady() {
-      setTimeout(async() => {
-        // await this.setData({
-        //   remind: ''
-        // })
-        console.log(this['remind'])
-        this.remind = ''
-        this.$apply()
-      }, 1000);
-      let userinfo = apis._user.myInfo
-      if (userinfo.stuEmail && userinfo.stuPhoner && userinfo.stuQq) {
-        this.email = userinfo.stuEmail
-        this.phone = userinfo.stuPhoner
-        this.qq = userinfo.stuQq
-        this.we = userinfo.stuWechat
-        console.log('ye')
-      }
-    }
-
-    onLoad() {
-      // let myInfo = apis._user.myInfo
-
-    }
-    async append() {
-      let appendInfo = {}
-      if (apis.g_status) {
-        configs.showErrorModal(apis.g_status, '绑定失败');
-        return;
-      }
-      if (!this.email ||  !this.phone || !this.qq || !this.we || !this.types) {
-        configs.showErrorModal('信息不能为空', '提醒');
-        return false;
-      }
-      appendInfo = await wepy.request({
-        url: `${apis._server}/learningsystem/WeChat/appendUserInfo`,
-        method: 'POST',
-        header: {
-          'content-type': 'application/x-www-form-urlencoded'
-        },
-        data: {
-          openid: apis._user.openid,
-          email: this.email,
-          phone: this.phone,
-          qq: this.qq,
-          wechat: this.we,
-          types: this.types
-        }
-      })
-
-      let status = appendInfo.data.status
-      if(status>=200 || status < 400) {
-        wepy.showToast({
-          title: '成功完善信息',
-          icon: 'success',
-          duration: 1500
-        })
-      }
-      console.log(appendInfo)
-    }
-    inputFocus(e) {
-      let id = e.target.id
-      this[id+'_focus'] = true
-      console.log(id+'   '+this[id+'_focus'])
-    }
-    inputBlur(e) {
-      let id = e.target.id
-      this[id+'_focus'] = false
-      console.log(id+ '    ' +this[id+'_focus'])
-    }
-    emailInput(e) {
-      this.email = e.detail.value
-      console.log(this.email)
-    }
-    phoneInput(e) {
-      this.phone = e.detail.value
-      console.log(this.phone)
-    }
-    qqInput(e) {
-      this.qq = e.detail.value
-      console.log(this.qq)
-    }
-    weInput(e) {
-      this.we = e.detail.value
-      console.log(this.we)
-    }
-   
   }
+
+  onLoad() {}
+  // 完善信息
+  async append() {
+    let appendInfo = {};
+    if (apis.g_status) {
+      configs.showErrorModal(apis.g_status, "绑定失败");
+      return;
+    }
+    if (!this.email || !this.phone || !this.qq || !this.we || !this.types) {
+      configs.showErrorModal("信息不能为空", "提醒");
+      return false;
+    }
+    appendInfo = await wepy.request({
+      url: `${apis._server}/learningsystem/WeChat/appendUserInfo`,
+      method: "POST",
+      header: {
+        "content-type": "application/x-www-form-urlencoded"
+      },
+      data: {
+        openid: apis._user.openid,
+        email: this.email,
+        phone: this.phone,
+        qq: this.qq,
+        wechat: this.we,
+        types: this.types
+      }
+    });
+
+    let status = appendInfo.data.status;
+    if (status >= 200 || status < 400) {
+      wepy.showToast({
+        title: "成功完善信息",
+        icon: "success",
+        duration: 1500
+      });
+    }
+  }
+  // 添加获取焦点样式
+  inputFocus(e) {
+    let id = e.target.id;
+    this[id + "_focus"] = true;
+  }
+  // 添加失去焦点样式
+  inputBlur(e) {
+    let id = e.target.id;
+    this[id + "_focus"] = false;
+  }
+  // 获取邮箱输入内容
+  emailInput(e) {
+    this.email = e.detail.value;
+  }
+  // 获取手机输入内容
+  phoneInput(e) {
+    this.phone = e.detail.value;
+  }
+  // 获取qq输入内容
+  qqInput(e) {
+    this.qq = e.detail.value;
+  }
+  // 获取微信输入内容
+  weInput(e) {
+    this.we = e.detail.value;
+  }
+}
 </script>
 
 <style lang="less">
- .remind-box {
-    position: absolute;
-    width: 100%;
-    height: 100%; 
-    z-index: 999;
-  }
-  .input-group {
+.remind-box {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+}
+.input-group {
   display: flex;
   align-items: center;
   padding: 25rpx 10rpx;
@@ -159,48 +153,48 @@
   background: #fff;
   border-radius: 5px;
   border: 2px solid #f4f4f4;
-  transition: all .25s ease-in-out;
+  transition: all 0.25s ease-in-out;
 }
-  .append-form {
-    padding: 150rpx 0 50rpx;
-  }
-  .append-form .input-group {
-    padding: 20rpx 8rpx;
-    margin: 30rpx 10%;
-  }
-  .input-group.active {
-    border: 2px solid #0099ff;
-  }
-  .input-label {
+.append-form {
+  padding: 150rpx 0 50rpx;
+}
+.append-form .input-group {
+  padding: 20rpx 8rpx;
+  margin: 30rpx 10%;
+}
+.input-group.active {
+  border: 2px solid #0099ff;
+}
+.input-label {
   color: #888;
   font-size: 13pt;
   height: 25rpx;
   line-height: 25rpx;
   padding: 0 25rpx;
-  border-right: 1px solid #d8d8d8; 
+  border-right: 1px solid #d8d8d8;
 }
-  .append-form .input-label {
-    font-size: 11pt;
-    height: 20rpx;
-    line-height: 20rpx;
-    padding: 0 20rpx;
-  }
-  .append-form .input-group input,
-  .append-form .input-group picker {
-    font-size: 11pt;
-    padding: 0 20rpx;
-  }
-  .confirm-btn {
-    font-size: 13pt;
-    height: 85rpx;
-    line-height: 85rpx;
-    color: #f4f4f4;
-    text-align: center;
-    background: #e55c5c;
-    border-radius: 5px;
-    margin: 50rpx 10%;
-  }
-  .comfirm-btn:active {
-    opacity: .8;
-  }
+.append-form .input-label {
+  font-size: 11pt;
+  height: 20rpx;
+  line-height: 20rpx;
+  padding: 0 20rpx;
+}
+.append-form .input-group input,
+.append-form .input-group picker {
+  font-size: 11pt;
+  padding: 0 20rpx;
+}
+.confirm-btn {
+  font-size: 13pt;
+  height: 85rpx;
+  line-height: 85rpx;
+  color: #f4f4f4;
+  text-align: center;
+  background: #e55c5c;
+  border-radius: 5px;
+  margin: 50rpx 10%;
+}
+.comfirm-btn:active {
+  opacity: 0.8;
+}
 </style>

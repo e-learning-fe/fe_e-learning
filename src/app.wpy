@@ -65,8 +65,11 @@
         'pages/more/login',
         'pages/core/bbs/bbs',
         'pages/core/bbs/detail/detail',
+        'pages/core/bbs/detail/reply',
         "pages/more/append",
-        "pages/more/issue"
+        "pages/more/issue",
+        "pages/index/notice",
+        "pages/index/curCourse"
       ],
       window: {
         backgroundTextStyle: 'light',
@@ -113,11 +116,9 @@
     async onLaunch() {
       let a = wepy.getStorageInfoSync()
       a.keys.forEach((i) => {
-        // console.log(wepy.getStorageSync(i))
         apis.cache[i] = wepy.getStorageSync(i)
       });
       console.log(apis)
-      // console.log(apis.cache)
     }
   }
 </script>

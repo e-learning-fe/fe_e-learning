@@ -1,45 +1,93 @@
 <template>
   <view class="container">
+    <!-- <block wx:for="{{details}}" wx:key="rdqId"> -->
     <view class="topic-box">
-      <view class="title">123213</view>
+      <text class="title">{{rdqTheme}}</text>
       <view class="info">
-        <text>2018-01-15 14:54:00</text>
-        <text>网页设计与制作</text>
+        <text>{{rdqDate}}</text>
+        <text>{{rdqTheme}}</text>
+        <text>{{rdqAuthor}}</text>
       </view>
       <view class="detail">
-        <text>天天开心下昂天天开心下昂上天天开心下昂上天天开心下昂上天天开心下昂上天天开心下昂上天天开心下昂上天天开心下昂上天天开心下昂上天天开心下昂上v上</text>
+        <text>{{rdqText}}</text>
       </view>
-      <navigator class="reply-btn">我来回答</navigator>
+      <navigator class="reply-btn" url="./reply?rdqId={{rdqId}}&rdqTheme={{rdqTheme}}">我来回答</navigator>
     </view>
+    <!-- </block> -->
     <view class="reply-box">
-      <view class="reply-hd">
-        <image class="reply-hd-avatar" src="{{userAvatar}}"></image>
-        <text class="reply-hd-name">Howard</text>
-        <text class="info">2018-01-15 14:54:00</text>
-      </view>
-      <view class="reply-content">
-        <text>HowardHowardHowardHowardHow天天开心下昂天天开心下昂上天天开心下昂上天天开心下昂上天天开心下昂上天天开心下昂上天天开心下昂上天天开心下昂上天天开心下昂上天天开心下昂上v上ard</text>
-      </view>
-      <text class="reply-floor">1#</text>
+      <block wx:for="{{list}}" wx:key="{{stuStudentid}}">
+        <view class="reply-hd">
+          <!-- <image class="reply-hd-avatar" src="{{userAvatar}}" /> -->
+          <text class="reply-hd-name">{{item.student.stuName}}</text>
+          <text class="info">{{item.wbTime}}</text>
+        </view>
+        <view class="reply-content">
+          <text>{{item.wbContent}}</text>
+        </view>
+        <!-- <text class="reply-floor">{{item.data}}#</text> -->
+      </block>
     </view>
   </view>
 </template>
 
 <script>
-  import wepy from "wepy"
-  import apis from "../../../../config/apis.js"
+  import wepy from "wepy";
+  import apis from "../../../../config/apis.js";
   export default class Detail extends wepy.page {
     config = {}
-
     // bbs_detail.js
     /**
      * Author: Huanda.Wu
-     * Date: 2018.01.15
      */
-    async onLoad() {
-      this.setData({
-        userAvatar: apis._user.wx.avatarUrl
+    data = {
+      // remind: '加载中',
+      rdqId: '', //话题ID
+      rdqTheme: '', //话题标题
+      rdqDate: '', //话题发布日期
+      lName: '', //话题所属课程
+      rdqAuthor: '', //话题发起人
+      rdqText: '', //话题内容
+      wbUploadfile_len: '', //附件数量
+      wbUploadfile_list: [],
+      wbUploadfile_loading: false, //附件下载状态
+      list: [],
+      pageNum: 1,
+      flooor: []
+    }
+    async onLoad(options) {
+      // this.setData({
+      //  userAvatar: apis._user.wx.avatarUrl
+      // })
+      this.rdqId = options.rdqId
+      this.rdqTheme = options.rdqTheme
+      this.rdqText = options.rdqText
+      this.rdqDate = options.rdqDate
+      this.lName = options.lName
+      this.rdqAuthor = options.stuName
+      await this.getReplyLists()
+    }
+    async getReplyLists() {
+      // 获取回复列表
+      let getReplyList = {};
+      getReplyList = await wepy.request({
+        url: `${apis._server}/learningsystem/Writeback/selectRdqAndWrite`,
+        method: "GET",
+        header: {
+          "content-type": "application/x-www-form-urlencoded"
+        },
+        dataType: "json",
+        data: {
+          rdqId: this.rdqId,
+          pageNum: this.pageNum
+        }
       })
+      apis._user.getReplyList = getReplyList.data.data
+      console.log('回复列表')
+      console.log(apis._user.getReplyList)
+      if (getReplyList.data.status || getReplyList.data.status === 200) {
+        this.list = apis._user.getReplyList
+        this.$apply()
+      }
     }
   }
 </script>
@@ -50,7 +98,8 @@
     padding: 0 30rpx;
     flex: 0;
   }
-  .topic-box, .reply-box  {
+  .topic-box,
+  .reply-box {
     display: flex;
     flex-direction: column;
     margin-top: 10rpx;
@@ -99,7 +148,7 @@
   .reply-hd {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     width: 100%;
     padding: 10rpx 0;

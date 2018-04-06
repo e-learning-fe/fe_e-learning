@@ -1,0 +1,126 @@
+<template>
+  <view class="container">
+    <text class="header">{{rdqTheme}}</text>
+    <textarea class="content" placeholder="请输入需要回复的内容" placeholder-style="color:#ccc;" maxlength="{{textMaxLen}}" auto-focus auto-height @input="bindWordLimit" @blur="bindBlur"></textarea>
+    <view class="bottom-box">
+      <label class="checkbox">
+            <switch />是否匿名
+          </label>
+      <text>还可以输入 {{limitTextLen}} 个字</text>
+    </view>
+    <view class="btn-box">
+      <view class="confirm-btn" @tap="bindReply">发送</view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from "wepy"
+  import apis from "../../../../config/apis.js"
+  export default class Reply extends wepy.page {
+    config = {
+      "enablePullDownRefresh": false
+    }
+
+    // reply.js
+    /**
+     * Author: Huanda.Wu
+     */
+    data = {
+      switch: false, // 是否匿名
+      rdqId: '', // 话题ID
+      rdqTheme: '', // 话题主题
+      stuStudentid: '', // 学生学号
+      wbContent: '', // 回复的内容
+      textMaxLen: '500', // 最多输入字数
+      limitTextLen: '500', // 还可以输入的字数
+    }
+    async onLoad(options) {
+      this.rdqId = options.rdqId
+      this.rdqTheme = options.rdqTheme
+      this.stuStudentid = apis._user.myInfo.stuStudentid
+    }
+
+    async toReply(){
+      let reply = {}
+      reply = await wepy.request({
+        url: `${apis._server}/learningsystem/Writeback/replyMessage`,
+        method: "GET",
+        header: {
+          "content-type": "application/x-www-form-urlencoded"
+        },
+        dataType: "json",
+        data: {
+          rdqId: this.rdqId,
+          stuStudentid: this.stuStudentid,
+          wbContent: this.wbContent
+        }
+      })
+      console.log(reply.data)
+    }
+
+    
+
+    methods = {
+      // 字数限制
+      bindWordLimit(e) {
+        let value = e.detail.value, len = parseInt(value.length)
+        if(len > this.textMaxLen) return
+        this.limitTextLen = this.textMaxLen - len
+      },
+      // 当输入框失焦时存储内容
+      binBlur(e){
+        this.wbContent = e.detail.value
+      },
+      bindReply(e) {
+        toReply()
+      }
+    }
+
+  }
+</script>
+
+<style lang="less">
+  .container {
+    flex: 0;
+    background: #fff;
+    padding: 0 30rpx;
+  }
+  .header {
+    font-size: 16pt;
+    font-weight: bolder;
+    margin: 40rpx 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .content{
+    font-size: 12pt;
+    width: 100%;
+    min-height: 200rpx;
+    margin-bottom: 20rpx;
+  }
+  .bottom-box {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20rpx;
+  }
+  .btn-box {
+    margin-bottom: 20rpx;
+  }
+  .confirm-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    bottom: 5rpx;
+    font-size: 12pt;
+    color: #fff;
+    background: #73b4ef;
+    border-radius: 15rpx;
+    width: 100%;
+    height: 70rpx;
+  }
+</style>

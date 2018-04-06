@@ -11,27 +11,29 @@
         </block>
       </view>
       <text style="position: absolute; top:50%;left: 50%; transform: translate(-50%);-webkit-transform: translate(-50%)">请先绑定</text>
-    </block> -->
-    <!-- <block wx:else> -->
-      <view class="main-core">
-        <block wx:for="{{core}}" wx:key="index">
-          <navigator class="main-core-item" url="../core/{{item.id}}/{{item.id}}">
-            <image src="/images/core/{{item.id}}@active.png" class="core-item-icon"></image>
-            <text class="core-item-name">{{item.name}}</text>
-          </navigator>
-        </block>
-      </view>
-      <!-- 教师消息 -->
-      <view class="tech-news" bindtap="test">
+    </block>
+    <block wx:else> -->
+    <view class="main-core">
+      <block wx:for="{{core}}" wx:key="index">
+        <navigator class="main-core-item" url="../core/{{item.id}}/{{item.id}}">
+          <image src="/images/core/{{item.id}}@active.png" class="core-item-icon"></image>
+          <text class="core-item-name">{{item.name}}</text>
+        </navigator>
+      </block>
+    </view>
+    <!-- 教师消息 -->
+    <navigator url="./notice">
+      <view class="tech-news">
         <!-- 消息顶部 -->
         <view class="tech-news-top">
           <image src="/images/core/notice@active.png" class="notice-icon"></image>
           <text class="tech-news-header">教师消息</text>
         </view>
+
         <!-- 消息内容 -->
         <view class="tech-news-container">
           <text style="font-size: 12pt;">{{tech.name}}老师:
-                                                        </text>
+          </text>
           <text style="margin-right: 20rpx;float: right;">{{tech.date}}</text>
           <view class="tech-news-content">
             {{tech.content}}
@@ -42,7 +44,9 @@
         <!-- 底部 -->
         <view class="tech-news-more">查看更多</view>
       </view>
-      <!-- 当前课时 -->
+    </navigator>
+    <!-- 当前课时 -->
+    <navigator url="./curCourse">
       <view class="cur-course">
         <view class="cur-course-top">
           <image src="/images/core/video@active.png" class="notice-icon"></image>
@@ -65,129 +69,175 @@
         <!-- 底部 -->
         <view class="cur-course-more">{{user}}查看更多</view>
       </view>
+    </navigator>
     <!-- </block> -->
   </view>
 </template>
 
 <script>
-  import wepy from 'wepy'
-  import configs from '../../config'
-  import apis from '../../config/apis'
-  export default class Index extends wepy.page {
-    config = {
-      navigationBarTitleText: '网上学习平台'
-    }
-    data = {
-      offline: false,
-      remind: '',
-      core: [{
-        id: 'video',
-        name: '在线视频'
-      }, {
-        id: 'bbs',
-        name: '在线讨论'
-      }, {
-        id: 'upload',
-        name: '作业提交'
-      }],
-      tech: {
-        name: 'xxx',
-        date: '2018年1月1日',
-        content: '熟练度福建省的服了看似简单法律思考登记方式离开的房间死定了发空间死定了福克斯江东父老看似简单傅雷家书东方熟练度开发就算了快递费就算了快递费建设路口定积分克里斯丁荆防颗粒世纪东方困了就睡对方考虑死定了福克斯江东父老科技时代风口浪尖圣诞快乐福建省打开了房间时刻了解到付款老实交代傅雷家书东方丽景卡死了定积分'
+import wepy from "wepy";
+import configs from "../../config";
+import apis from "../../config/apis";
+export default class Index extends wepy.page {
+  config = {
+    navigationBarTitleText: "网上学习平台"
+  };
+  data = {
+    offline: false,
+    remind: "",
+    core: [
+      {
+        id: "video",
+        name: "在线视频"
       },
-      course: {
-        name: '网页设计基础',
-        imgSrc: '/images/index/index.png',
-        content: 'loremsldfjsldkfjlwkejrflkjfdlsk'
+      {
+        id: "bbs",
+        name: "在线讨论"
+      },
+      {
+        id: "upload",
+        name: "作业提交"
       }
+    ],
+    tech: {
+      name: "xxx",
+      date: "2018年1月1日",
+      content:
+        "内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试"
+    },
+    course: {
+      name: "网页设计基础",
+      imgSrc: "/images/index/index.png",
+      content:
+        "内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试"
     }
-    async onLoad() {
-      try {
-        await configs.getUser()
-        // console.log(apis._user.is_bind)
-        // console.log('绑定' + this.remind)
-        // console.log(this.data)
-        if (apis._user.is_bind) {
-          this.remind = apis._user.is_bind
-          this.$apply()
-        }
-      } catch (e) {
-        wepy.showModal({
-          title: '提示',
-          content: `用户登录失败`
-        })
-      }
-      // console.log(configs.getUser())
-    }
-    async onShow() {
-      // if (this.offline) {
-      //   await configs.getUser()
-      //   return false
-      // }
+  };
+  async onLoad() {
+    try {
+      // 获取用户信息
+      await configs.getUser();
+      // 判断用户绑定状态
       if (apis._user.is_bind) {
-        this.remind = apis._user.is_bind
-        this.$apply()
+        this.remind = apis._user.is_bind;
+        this.$apply();
       }
+    } catch (e) {
+      wepy.showModal({
+        title: "提示",
+        content: `用户登录失败`
+      });
     }
-    
   }
+  async onShow() {
+    if (apis._user.is_bind) {
+      this.remind = apis._user.is_bind;
+      this.$apply();
+    }
+  }
+}
 </script>
 
 <style lang="less">
-  .main-core,
-  .tech-news,
-  .cur-course {
-    background: #fff;
-    border-bottom: 1rpx solid #e5e5e5;
-    box-shadow: 5rpx 5rpx 15rpx #ccc;
-    padding: 10rpx;
-    margin: 30rpx 30rpx 20rpx;
-  }
-  .tech-news-container,
-  .cur-course-container {
-    margin: 30rpx 0;
-  } // 顶部
-  .main-core {
+.main-core,
+.tech-news,
+.cur-course {
+  background: #fff;
+  border-bottom: 1rpx solid #e5e5e5;
+  box-shadow: 5rpx 5rpx 15rpx #ccc;
+  padding: 10rpx;
+  margin: 30rpx 30rpx 20rpx;
+}
+.tech-news-container,
+.cur-course-container {
+  margin: 30rpx 0;
+} // 顶部
+.main-core {
+  display: flex;
+  flex-flow: row wrap;
+  align-content: flex-start;
+  justify-content: space-around;
+  background: #fff;
+  .main-core-item {
     display: flex;
-    flex-flow: row wrap;
-    align-content: flex-start;
-    justify-content: space-around;
-    background: #fff;
-    .main-core-item {
-      display: flex;
-      flex-flow: column wrap;
-      justify-content: center;
-      align-items: center;
-      box-sizing: border-box;
-      margin: 15rpx;
-      .core-item-icon {
-        display: block;
-        width: 100rpx;
-        height: 100rpx;
-      }
-      .core-item-name {
-        display: block;
-      }
-      .core-item-name.disable {
-        color: #ccc;
-      }
+    flex-flow: column wrap;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 15rpx;
+    .core-item-icon {
+      display: block;
+      width: 100rpx;
+      height: 100rpx;
     }
-  } // 教师消息
-  .tech-news {
-    padding: 10rpx;
-    .tech-news-top {
-      display: flex;
-      align-items: center;
-      .notice-icon {
-        width: 50rpx;
-        height: 50rpx;
-      }
-      .tech-news-header {
-        display: block;
-        margin-left: 30rpx;
-      }
+    .core-item-name {
+      display: block;
     }
-    .tech-news-content {
+    .core-item-name.disable {
+      color: #ccc;
+    }
+  }
+} // 教师消息
+.tech-news {
+  padding: 10rpx;
+  .tech-news-top {
+    display: flex;
+    align-items: center;
+    .notice-icon {
+      width: 50rpx;
+      height: 50rpx;
+    }
+    .tech-news-header {
+      display: block;
+      margin-left: 30rpx;
+    }
+  }
+  .tech-news-content {
+    text-indent: 40rpx;
+    text-align: left;
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 5;
+    width: 98%;
+  }
+}
+.line {
+  border-bottom: 1rpx dotted #ccc;
+  height: 1rpx;
+  width: 100%;
+}
+.tech-news-more,
+.cur-course-more {
+  text-align: center;
+  margin-top: 12rpx;
+} // 当前课时
+.cur-course-top {
+  display: flex;
+  align-items: center;
+  .notice-icon {
+    width: 50rpx;
+    height: 50rpx;
+  }
+  .cur-course-header {
+    display: block;
+    margin-left: 30rpx;
+  }
+}
+.cur-course-content {
+  display: flex;
+  flex-direction: row;
+  .cur-course-left {
+    width: 256rpx;
+    image {
+      width: 256rpx;
+      height: 256rpx;
+    }
+  }
+  .cur-course-right {
+    flex: 1;
+    .cur-course-detail {
       text-indent: 40rpx;
       text-align: left;
       display: -webkit-box;
@@ -199,51 +249,5 @@
       width: 98%;
     }
   }
-  .line {
-    border-bottom: 1rpx dotted #ccc;
-    height: 1rpx;
-    width: 100%;
-  }
-  .tech-news-more,
-  .cur-course-more {
-    text-align: center;
-    margin-top: 12rpx;
-  } // 当前课时
-  .cur-course-top {
-    display: flex;
-    align-items: center;
-    .notice-icon {
-      width: 50rpx;
-      height: 50rpx;
-    }
-    .cur-course-header {
-      display: block;
-      margin-left: 30rpx;
-    }
-  }
-  .cur-course-content {
-    display: flex;
-    flex-direction: row;
-    .cur-course-left {
-      width: 256rpx;
-      image {
-        width: 256rpx;
-        height: 256rpx;
-      }
-    }
-    .cur-course-right {
-      flex: 1;
-      .cur-course-detail {
-        text-indent: 40rpx;
-        text-align: left;
-        display: -webkit-box;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        word-break: break-all;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 5;
-        width: 98%;
-      }
-    }
-  }
+}
 </style>
