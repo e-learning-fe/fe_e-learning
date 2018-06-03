@@ -17,9 +17,6 @@ const apis = {
   key (data) {
     return util.key(data)
   },
-  _time: {}, // 当前学期周数
-  globalData : {
-    refreshFlag : false
-  }
+  _time: {} // 当前学期周数
 }
 export default apis

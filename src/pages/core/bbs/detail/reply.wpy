@@ -1,15 +1,15 @@
 <template>
   <view class="container">
     <text class="header">{{rdqTheme}}</text>
-    <textarea class="content" placeholder="请输入需要回复的内容" placeholder-style="color:#ccc;" maxlength="{{textMaxLen}}" auto-focus auto-height @input="bindWordLimit" @blur="bindBlur"></textarea>
+    <textarea class="content" placeholder="请输入需要回复的内容" placeholder-style="color:#ccc;" maxlength="{{textMaxLen}}" auto-focus auto-height bindinput="wordLimit" bindblur="textBlur"></textarea>
     <view class="bottom-box">
       <label class="checkbox">
-            <switch />是否匿名
-          </label>
+                    <switch />是否匿名
+                  </label>
       <text>还可以输入 {{limitTextLen}} 个字</text>
     </view>
     <view class="btn-box">
-      <view class="confirm-btn" @tap="bindReply">发送</view>
+      <view class="confirm-btn" bindtap="toReply">发送</view>
     </view>
   </view>
 </template>
@@ -21,7 +21,6 @@
     config = {
       "enablePullDownRefresh": false
     }
-
     // reply.js
     /**
      * Author: Huanda.Wu
@@ -31,52 +30,68 @@
       rdqId: '', // 话题ID
       rdqTheme: '', // 话题主题
       stuStudentid: '', // 学生学号
+      rdqAuthor:'', // 回复的作者名
       wbContent: '', // 回复的内容
       textMaxLen: '500', // 最多输入字数
       limitTextLen: '500', // 还可以输入的字数
     }
+    // 字数限制
+    wordLimit(e) {
+      let value = e.detail.value,
+        len = parseInt(value.length)
+      if (len > this.textMaxLen) return
+      this.limitTextLen = this.textMaxLen - len
+    }
+    // 当输入框失焦时存储内容
+    textBlur(e) {
+      this.wbContent = e.detail.value
+    }
+
     async onLoad(options) {
       this.rdqId = options.rdqId
       this.rdqTheme = options.rdqTheme
+      this.rdqAuthor = options.rdqAuthor
       this.stuStudentid = apis._user.myInfo.stuStudentid
     }
-
-    async toReply(){
+    async toReply() {
       let reply = {}
       reply = await wepy.request({
         url: `${apis._server}/learningsystem/Writeback/replyMessage`,
-        method: "GET",
+        method: "POST",
         header: {
-          "content-type": "application/x-www-form-urlencoded"
+          "content-type": "multipart/form-data"
         },
         dataType: "json",
         data: {
-          rdqId: this.rdqId,
-          stuStudentid: this.stuStudentid,
-          wbContent: this.wbContent
+          rdqId: this.rdqId,  // 该帖子的ID
+          stuStudentid: this.stuStudentid,  // 回复的学生ID
+          wbContent: this.wbContent, // 回复的内容
+          file: ''  // 上传的文件
         }
       })
-      console.log(reply.data)
+      wepy.showToast({
+          title: '绑定成功',
+          icon: 'success',
+          duration: 1500
+      })
+      wepy.navigateBack()
+
+      // let status = reply.data.status
+      // if(status >=200 && status < 400) {
+      //   configs.showLoadToast('请稍后')
+      //   wepy.showToast({
+      //     title: '绑定成功',
+      //     icon: 'success',
+      //     duration: 1500
+      //   })
+        
+      //   wepy.navigateBack()
+        
+      // } else {
+      //   wepy.hideToast();
+      //   configs.showErrorModal('发送失败，请重新操作', '发送失败');
+      // }
     }
-
-    
-
-    methods = {
-      // 字数限制
-      bindWordLimit(e) {
-        let value = e.detail.value, len = parseInt(value.length)
-        if(len > this.textMaxLen) return
-        this.limitTextLen = this.textMaxLen - len
-      },
-      // 当输入框失焦时存储内容
-      binBlur(e){
-        this.wbContent = e.detail.value
-      },
-      bindReply(e) {
-        toReply()
-      }
-    }
-
   }
 </script>
 
@@ -94,7 +109,7 @@
     justify-content: center;
     align-items: center;
   }
-  .content{
+  .content {
     font-size: 12pt;
     width: 100%;
     min-height: 200rpx;

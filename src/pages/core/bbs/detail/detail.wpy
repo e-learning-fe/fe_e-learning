@@ -11,7 +11,7 @@
       <view class="detail">
         <text>{{rdqText}}</text>
       </view>
-      <navigator class="reply-btn" url="./reply?rdqId={{rdqId}}&rdqTheme={{rdqTheme}}">我来回答</navigator>
+      <navigator class="reply-btn" url="./reply?rdqId={{rdqId}}&rdqTheme={{rdqTheme}}&rdqAuthor={{rdqAthor}}">我来回答</navigator>
     </view>
     <!-- </block> -->
     <view class="reply-box">

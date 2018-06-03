@@ -125,7 +125,7 @@
       // await apis.showLoadToast('请稍后')
       console.log(bindInfo)
       let status = bindInfo.data.status
-      if(status >=200 && status < 400) {
+      if(status >= 200 && status < 400) {
         configs.showLoadToast('请稍后')
         apis.cache = {}
         wepy.clearStorage()
@@ -137,56 +137,11 @@
         })
         
         wepy.navigateBack()
-        // wepy.redirectTo({
-        //   url: '/pages/index/index'
-        // })
         
       } else {
         wepy.hideToast();
         configs.showErrorModal('您输入的账号或密码错误，请重新输入', '绑定失败');
       }
-      // .then((res) => {
-      //   if (res.data && res.data.status >= 200 && res.data.status < 400) {
-      //     apis.showLoadToast('请稍后');
-      //     // 清除缓存
-      //     wepy.clearStorage(); // 清理本地数据缓存
-      //     apis.getUser(() => {
-      //       wepy.showToast({
-      //         title: '绑定成功',
-      //         icon: 'success',
-      //         duration: 1500
-      //       });
-      //       // 完善个人信息
-      //       // if (!apis._user.teacher) {
-      //       setTimeout(async() => {
-      //         await wepy.showModal({
-      //           title: '提示',
-      //           content: '部分功能需要完善信息才能正常使用，是否前往完善信息？',
-      //           cancelText: '以后再说',
-      //           confirmText: '完善信息'
-      //         }).then((res) => {
-      //           if (res.confirm) {
-      //             wepy.redirectTo({
-      //               url: 'append'
-      //             });
-      //           } else {
-      //             wepy.navigateBack();
-      //           }
-      //         });
-      //       }, 1500);
-      //       // } else {
-      //       //   wepy.navigateBack();
-      //       // }
-      //       wepy.navigateBack();
-      //     });
-      //   } else {
-      //     wepy.hideToast();
-      //     apis.showErrorModal('您输入的账号或密码错误，请重新输入', '绑定失败');
-      //   }
-      // }, (res) => {
-      //   wepy.hideToast();
-      //   apis.showErrorModal(res.errMsg, '绑定失败');
-      // });
     }
     useridInput(e) {
       this.userid = e.detail.value;

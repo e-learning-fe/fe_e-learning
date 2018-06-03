@@ -20,7 +20,6 @@ const configs = {
       userinfoRaw = await _this.getUserInfo()
       await _this.saveCache('userinfo', userinfoRaw.userInfo)
       // console.log(apis.cache)
-      
       if(!userinfoRaw.encryptedData || !userinfoRaw.iv){
         apis.g_status = '无关联AppID';
         return;
